@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Icon } from "@/components/common/Icon";
-import { Eye, Check, Search, Image as ImageIcon, Upload, Monitor, Smartphone, Grid } from "lucide-react";
+import { Eye, Check, Search, Image as ImageIcon, Monitor, Smartphone, Grid } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FileUpload } from "@/components/ui/FileUpload";
 

@@ -17,8 +17,10 @@ exports.getTemplates = async (req, res) => {
 // @access  Public
 exports.createTemplate = async (req, res) => {
     try {
+        console.log("Create Template Request:", req.body, req.file); // Debug log
+
         if (!req.file) {
-            return res.status(400).json({ success: false, message: 'Please upload a file' });
+            return res.status(400).json({ success: false, message: 'No file uploaded or file rejected by filter.' });
         }
 
         const { name, type, aspectRatio } = req.body;

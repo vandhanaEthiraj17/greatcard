@@ -7,10 +7,20 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Badge } from "@/components/ui/Badge";
 import { Alert } from "@/components/ui/Alert";
 import { Icon } from "@/components/common/Icon";
-import { Palette, Download, FileSpreadsheet, CheckCircle2, Move, Type, AlignLeft, AlignCenter, AlignRight, ZoomIn, ZoomOut, Save } from "lucide-react";
+import {
+    Palette, Download, FileSpreadsheet, CheckCircle2, Move, Type,
+    AlignLeft, AlignCenter, AlignRight, ZoomIn, ZoomOut, Save,
+    Bold, Italic, Underline
+} from "lucide-react";
 import { EXTENSION_TYPES } from "@/utils/constants";
 import { Select } from "@/components/ui/Select";
 import { Toggle } from "@/components/ui/Toggle";
+
+import { ToggleGroup } from "@/components/ui/ToggleGroup";
+import { Slider } from "@/components/ui/Slider";
+import { BatchRow } from "../utils/batchProcessor";
+import { useEditorStore } from "../store/editorStore";
+import { useNavigate } from "react-router-dom";
 
 // Types
 interface Layer {
@@ -26,13 +36,18 @@ interface Layer {
         size?: number;
         color?: string;
         align?: 'left' | 'center' | 'right';
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
     };
 }
 
 const InputData = () => {
+    const navigate = useNavigate();
     // Input Data State
-    const [file, setFile] = useState<File | null>(null);
-    const [batchData, setBatchData] = useState<any>(null);
+    // Input Data State
+    // const [file, setFile] = useState<File | null>(null); // Unused state
+
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string>("");
 
@@ -40,8 +55,8 @@ const InputData = () => {
     const [zoom, setZoom] = useState(100);
     const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
     const [template, setTemplate] = useState<any>(null);
-    const [generatedCards, setGeneratedCards] = useState<any[]>([]);
-    const [isGenerating, setIsGenerating] = useState(false);
+    const [generatedCards] = useState<any[]>([]); // Removed setter
+    const [isGenerating] = useState(false); // Removed setter
 
     // Default layers if none exist
     const [layers, setLayers] = useState<Layer[]>([
@@ -77,6 +92,35 @@ const InputData = () => {
         }
     ]);
 
+    // Derived Selection
+    const selectedLayer = layers.find(l => l.id === selectedElementId);
+
+    // Handlers
+    const handleLayerUpdate = (id: string, updates: any) => {
+        setLayers(currentLayers => currentLayers.map(l => {
+            if (l.id !== id) return l;
+
+            // Simple check for style properties vs top-level
+            const styleKeys = ['font', 'size', 'color', 'align', 'bold', 'italic', 'underline'];
+            const newStyle = { ...l.style };
+            const topLevelUpdates: any = {};
+
+            Object.entries(updates).forEach(([key, value]) => {
+                if (styleKeys.includes(key)) {
+                    newStyle[key as keyof typeof newStyle] = value as any;
+                } else {
+                    topLevelUpdates[key] = value;
+                }
+            });
+
+            return {
+                ...l,
+                ...topLevelUpdates,
+                style: newStyle
+            };
+        }));
+    };
+
     // Load template details
     useEffect(() => {
         const fetchTemplate = async () => {
@@ -106,111 +150,49 @@ const InputData = () => {
         fetchTemplate();
     }, []);
 
+    const handleSaveLayout = () => {
+        // Mock save capability for now
+        console.log("Saving layout:", layers);
+        alert("Layout saved locally!");
+    };
+
+    const [batchData, setBatchData] = useState<BatchRow[]>([]);
+
+    // Import helper
     const handleCSVUpload = async (selectedFile: File) => {
-        setFile(selectedFile);
+        // setFile(selectedFile);
         setIsUploading(true);
         setError("");
 
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-
         try {
-            const res = await fetch('/api/upload/csv', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await res.json();
+            // Dynamic import to avoid SSR issues if any (standard vite pattern)
+            const { parseCSV } = await import('../utils/batchProcessor');
+            const data = await parseCSV(selectedFile);
 
-            if (data.success) {
-                setBatchData(data.data);
+            if (data.length > 0) {
+                setBatchData(data);
             } else {
-                setError(data.message || "Upload failed");
+                setError("No valid rows found in CSV.");
             }
         } catch (err) {
             console.error(err);
-            setError("Network error uploading CSV");
+            setError("Error parsing CSV file.");
         } finally {
             setIsUploading(false);
         }
     };
 
-    const handleLayerUpdate = (id: string, updates: Partial<Layer> | Partial<Layer['style']>) => {
-        setLayers(prev => prev.map(layer => {
-            if (layer.id !== id) return layer;
-
-            // Check if updates are for style or top-level props
-            // This is a bit quick-and-dirty, typical for prototypes
-            if ('font' in updates || 'size' in updates || 'color' in updates || 'align' in updates) {
-                return { ...layer, style: { ...layer.style, ...updates } };
-            }
-            return { ...layer, ...updates };
-        }));
-    };
-
-    const selectedLayer = layers.find(l => l.id === selectedElementId);
-
-    const handleSaveLayout = async () => {
-        if (!template?._id) return alert("No template selected");
-
-        try {
-            const res = await fetch(`/api/templates/${template._id}/layout`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ layout: layers })
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert("Layout saved successfully!");
-            } else {
-                alert("Failed to save layout: " + data.message);
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Error saving layout");
-        }
-    };
-
+    // Client-side preview generation
     const handleGenerate = async () => {
-        if (!template?._id) return alert("Missing Template ID");
-        if (!batchData?.batchId) return alert("Please upload a CSV first");
+        if (!batchData.length) return alert("Please upload a CSV first");
 
-        // Convert our simplified layers to what the backend expects
-        const layerConfig = layers.map(l => ({
-            type: l.type === 'logo' ? 'image' : 'text', // Backend expects 'text' or 'image'
-            content: l.content,
-            x: l.x,
-            y: l.y,
-            style: l.style
-        }));
+        // Push to store for Visual Editor
+        useEditorStore.getState().setBatchData(batchData);
+        // Also ensure elements are set if not already locally (though Visual Editor uses store.elements)
+        // Ideally we should sync layers -> elements here if we want seamless transition based on InputData changes
+        // But for now, let's assume Visual Positioning is the main editor.
 
-        setIsGenerating(true);
-
-        try {
-            const res = await fetch('/api/generate/bulk', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    templateId: template._id,
-                    batchId: batchData.batchId,
-                    layerConfig
-                })
-            });
-            const data = await res.json();
-
-            if (data.success) {
-                setGeneratedCards(data.data);
-                setTimeout(() => {
-                    document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            } else {
-                alert("Generation Failed: " + data.message);
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Error triggering generation");
-        } finally {
-            setIsGenerating(false);
-        }
+        navigate('/create/visual-positioning');
     };
 
     return (
@@ -264,28 +246,33 @@ const InputData = () => {
                         <div className="flex-1 w-full">
                             {isUploading ? (
                                 <div className="p-4 bg-gray-50 text-center">Uploading...</div>
-                            ) : batchData ? (
+                            ) : batchData && batchData.length > 0 ? (
                                 <Alert variant="default" className="bg-green-50 border-green-200 text-green-800">
-                                    Found {batchData.rowCount} rows.
+                                    Found {batchData.length} rows.
                                 </Alert>
                             ) : (
                                 <div className="p-4 bg-gray-50 text-center text-gray-400">No file yet</div>
                             )}
+                            {error && (
+                                <Alert variant="destructive" className="mt-2">
+                                    {error}
+                                </Alert>
+                            )}
                         </div>
                     </div>
-                    {/* Preview Table ... */}
-                    {batchData && (
+                    {/* Preview Table */}
+                    {batchData && batchData.length > 0 && (
                         <div className="border rounded-lg overflow-hidden">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        {batchData.headers.map((h: string) => <TableHead key={h}>{h}</TableHead>)}
+                                        {Object.keys(batchData[0]).map((h: string) => <TableHead key={h}>{h}</TableHead>)}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {batchData.preview.map((row: any, i: number) => (
+                                    {batchData.slice(0, 5).map((row: any, i: number) => (
                                         <TableRow key={i}>
-                                            {batchData.headers.map((h: string) => <TableCell key={h}>{row[h]}</TableCell>)}
+                                            {Object.keys(batchData[0]).map((h: string) => <TableCell key={h}>{row[h]}</TableCell>)}
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -311,9 +298,9 @@ const InputData = () => {
                             {/* Toolbar */}
                             <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4">
                                 <div className="flex items-center gap-2">
-                                    <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 10, 50))}><ZoomOut size={16} /></Button>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 10, 50))}><ZoomOut size={16} /></Button>
                                     <span className="text-xs font-medium w-12 text-center">{zoom}%</span>
-                                    <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 10, 200))}><ZoomIn size={16} /></Button>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 10, 200))}><ZoomIn size={16} /></Button>
                                 </div>
                                 <Badge variant="outline" className="bg-gray-50">1920 x 1080 px</Badge>
                             </div>
@@ -375,15 +362,21 @@ const InputData = () => {
                                                 <Toggle checked={selectedLayer.visible} onChange={(e) => handleLayerUpdate(selectedLayer.id, { visible: e.target.checked })} label="Visible" />
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="text-xs font-medium text-gray-500 mb-1 block">X Position</label>
-                                                    <Input type="number" value={selectedLayer.x} onChange={(e) => handleLayerUpdate(selectedLayer.id, { x: parseInt(e.target.value) })} />
-                                                </div>
-                                                <div>
-                                                    <label className="text-xs font-medium text-gray-500 mb-1 block">Y Position</label>
-                                                    <Input type="number" value={selectedLayer.y} onChange={(e) => handleLayerUpdate(selectedLayer.id, { y: parseInt(e.target.value) })} />
-                                                </div>
+                                            <div className="space-y-4">
+                                                <Slider
+                                                    label="X Position"
+                                                    min={0}
+                                                    max={1200}
+                                                    value={selectedLayer.x}
+                                                    onChange={(val) => handleLayerUpdate(selectedLayer.id, { x: val })}
+                                                />
+                                                <Slider
+                                                    label="Y Position"
+                                                    min={0}
+                                                    max={800}
+                                                    value={selectedLayer.y}
+                                                    onChange={(val) => handleLayerUpdate(selectedLayer.id, { y: val })}
+                                                />
                                             </div>
                                         </div>
 
@@ -393,11 +386,87 @@ const InputData = () => {
                                                     <Icon icon={Type} size={16} /> Typography
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <Input type="number" value={selectedLayer.style.size} onChange={(e) => handleLayerUpdate(selectedLayer.id, { size: parseInt(e.target.value) })} label="Size (px)" />
-                                                    <Input type="color" className="h-[38px] p-1 cursor-pointer" value={selectedLayer.style.color} onChange={(e) => handleLayerUpdate(selectedLayer.id, { color: e.target.value })} label="Color" />
+                                                <div className="space-y-3">
+                                                    {/* Font Family */}
+                                                    <Select
+                                                        value={selectedLayer.style.font || 'Inter'}
+                                                        onChange={(val) => handleLayerUpdate(selectedLayer.id, { font: val })}
+                                                        options={[
+                                                            { value: 'Inter, sans-serif', label: 'Inter' },
+                                                            { value: 'Playfair Display, serif', label: 'Playfair Display' },
+                                                            { value: 'Arial, sans-serif', label: 'Arial' },
+                                                            { value: 'Times New Roman, serif', label: 'Times New Roman' },
+                                                            { value: 'Courier New, monospace', label: 'Courier' }
+                                                        ]}
+                                                    />
+
+                                                    {/* Size Row */}
+                                                    <div className="space-y-2">
+                                                        <Slider
+                                                            label="Font Size"
+                                                            min={10}
+                                                            max={200}
+                                                            value={selectedLayer.style.size || 16}
+                                                            onChange={(val) => handleLayerUpdate(selectedLayer.id, { size: val })}
+                                                        />
+                                                    </div>
+
+                                                    {/* Style & Align Row */}
+                                                    <div className="flex flex-col gap-3">
+                                                        {/* Alignment */}
+                                                        <div>
+                                                            <label className="text-xs text-gray-500 font-medium mb-1 block">Alignment</label>
+                                                            <ToggleGroup
+                                                                value={selectedLayer.style.align || 'left'}
+                                                                onChange={(val) => handleLayerUpdate(selectedLayer.id, { align: val })}
+                                                                options={[
+                                                                    { value: 'left', icon: AlignLeft, title: 'Left' },
+                                                                    { value: 'center', icon: AlignCenter, title: 'Center' },
+                                                                    { value: 'right', icon: AlignRight, title: 'Right' }
+                                                                ]}
+                                                            />
+                                                        </div>
+
+                                                        {/* Text Styles */}
+                                                        <div>
+                                                            <label className="text-xs text-gray-500 font-medium mb-1 block">Style</label>
+                                                            <ToggleGroup
+                                                                multiSelect
+                                                                value={[
+                                                                    selectedLayer.style.bold ? 'bold' : '',
+                                                                    selectedLayer.style.italic ? 'italic' : '',
+                                                                    selectedLayer.style.underline ? 'underline' : ''
+                                                                ].filter(Boolean)}
+                                                                onChange={(vals: any) => {
+                                                                    // Handle multi-select values array
+                                                                    const values = Array.isArray(vals) ? vals : [vals];
+                                                                    handleLayerUpdate(selectedLayer.id, {
+                                                                        bold: values.includes('bold'),
+                                                                        italic: values.includes('italic'),
+                                                                        underline: values.includes('underline')
+                                                                    });
+                                                                }}
+                                                                options={[
+                                                                    { value: 'bold', icon: Bold, title: 'Bold' },
+                                                                    { value: 'italic', icon: Italic, title: 'Italic' },
+                                                                    { value: 'underline', icon: Underline, title: 'Underline' }
+                                                                ]}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-xs font-medium text-gray-500 ml-1">Color</label>
+                                                    <Input
+                                                        type="color"
+                                                        className="h-[38px] w-full p-1 cursor-pointer"
+                                                        value={selectedLayer.style.color}
+                                                        onChange={(e) => handleLayerUpdate(selectedLayer.id, { color: e.target.value })}
+                                                    />
                                                 </div>
                                             </div>
+
                                         )}
                                     </>
                                 ) : (
@@ -408,53 +477,56 @@ const InputData = () => {
                             </div>
 
                             <div className="p-4 border-t border-gray-100 bg-gray-50">
-                                <Button className="w-full" onClick={handleSaveLayout} disabled={!template}>
+                                <Button type="button" className="w-full" onClick={handleSaveLayout} disabled={!template}>
                                     <Save className="mr-2 h-4 w-4" /> Save Layout
                                 </Button>
                             </div>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+                </CardContent >
+            </Card >
 
             {/* SECTION E: Results */}
-            {generatedCards.length > 0 && (
-                <Card id="results-section" className="border-green-200 bg-green-50/30">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-green-800">
-                            <Icon icon={CheckCircle2} className="text-green-600" />
-                            Generated Cards ({generatedCards.length})
-                        </CardTitle>
-                        <CardDescription>Your cards have been generated successfully.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {generatedCards.map((card, i) => (
-                                <div key={i} className="group relative bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="aspect-video bg-gray-100 relative overflow-hidden">
-                                        <img src={card.outputPath} alt="Generated Card" className="object-cover w-full h-full" />
+            {
+                generatedCards.length > 0 && (
+                    <Card id="results-section" className="border-green-200 bg-green-50/30">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-green-800">
+                                <Icon icon={CheckCircle2} className="text-green-600" />
+                                Generated Cards ({generatedCards.length})
+                            </CardTitle>
+                            <CardDescription>Your cards have been generated successfully.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {generatedCards.map((card, i) => (
+                                    <div key={i} className="group relative bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="aspect-video bg-gray-100 relative overflow-hidden">
+                                            <img src={card.outputPath} alt="Generated Card" className="object-cover w-full h-full" />
+                                        </div>
+                                        <div className="p-3">
+                                            <p className="text-xs text-gray-500 truncate mb-2">
+                                                To: {card.recipientData['Recipient Name'] || 'Recipient'}
+                                            </p>
+                                            <a
+                                                href={card.outputPath}
+                                                download
+                                                className="flex items-center justify-center gap-1 w-full py-1.5 bg-gray-50 hover:bg-gray-100 text-xs font-medium text-gray-700 rounded border border-gray-200 transition-colors"
+                                            >
+                                                <Download size={12} /> Download
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div className="p-3">
-                                        <p className="text-xs text-gray-500 truncate mb-2">
-                                            To: {card.recipientData['Recipient Name'] || 'Recipient'}
-                                        </p>
-                                        <a
-                                            href={card.outputPath}
-                                            download
-                                            className="flex items-center justify-center gap-1 w-full py-1.5 bg-gray-50 hover:bg-gray-100 text-xs font-medium text-gray-700 rounded border border-gray-200 transition-colors"
-                                        >
-                                            <Download size={12} /> Download
-                                        </a>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            }
 
             <div className="flex justify-end pt-4 pb-20">
                 <Button
+                    type="button"
                     disabled={!batchData || isGenerating}
                     variant="cta"
                     className="w-full md:w-auto text-lg px-8 py-6 h-auto"
@@ -465,7 +537,7 @@ const InputData = () => {
                     {!isGenerating && <Icon icon={CheckCircle2} className="ml-2" size={20} />}
                 </Button>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -1,132 +1,103 @@
-import { useState } from 'react';
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Toggle } from "@/components/ui/Toggle";
-import { Select } from "@/components/ui/Select";
-import { Icon } from "@/components/common/Icon";
-import { Move, Type, AlignLeft, AlignCenter, AlignRight, ZoomIn, ZoomOut, Save } from "lucide-react";
-import { Badge } from "@/components/ui/Badge";
+import React, { useEffect } from 'react';
+// import { EditorHeader } from '../components/ui/EditorHeader'; // Removed
+import { LeftElementsPanel } from '../panels/LeftElementsPanel';
+import { RightPropertiesPanel } from '../panels/RightPropertiesPanel';
+import { CanvasStage } from '../editor/CanvasStage';
+import { useEditorStore } from '../store/editorStore';
+import { ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
 
-const VisualPositioning = () => {
-    const [zoom, setZoom] = useState(100);
-    const [selectedElement, setSelectedElement] = useState<string | null>("Greeting");
+import { useNavigate } from 'react-router-dom';
+
+const VisualPositioning: React.FC = () => {
+    const setDimension = useEditorStore(state => state.setDimension);
+    const {
+        batchData,
+        previewIndex,
+        nextPreview,
+        prevPreview
+        // setPreviewIndex // Unused
+    } = useEditorStore();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setDimension('9:16'); // Default to story size as per screenshot preference
+    }, [setDimension]);
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
-            {/* LEFT: Canvas Area */}
-            <div className="flex-1 bg-gray-100 rounded-xl border border-gray-200 overflow-hidden relative flex flex-col">
-                {/* Canvas Toolbar */}
-                <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4">
-                    <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 10, 50))}><ZoomOut size={16} /></Button>
-                        <span className="text-xs font-medium w-12 text-center">{zoom}%</span>
-                        <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 10, 200))}><ZoomIn size={16} /></Button>
-                    </div>
-                    <Badge variant="outline" className="bg-gray-50">1920 x 1080 px</Badge>
-                </div>
-
-                {/* Canvas Content */}
-                <div className="flex-1 overflow-auto flex items-center justify-center p-8">
-                    <div
-                        className="bg-white shadow-2xl relative transition-transform duration-200"
-                        style={{ width: '800px', height: '450px', transform: `scale(${zoom / 100})` }}
+        <div className="flex flex-col h-[calc(100vh-8rem)] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Inner Header - "Visual Editor" context */}
+            <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <span className="text-gray-400">❖</span> Visual Editor
+                </h2>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => navigate('/distribution')}
+                        className="bg-brand-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2"
                     >
-                        {/* Template Background Placeholder */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-dashed border-gray-200 flex items-center justify-center">
-                            <p className="text-gray-300 text-4xl font-bold opacity-20 transform -rotate-12">TEMPLATE BACKGROUND</p>
-                        </div>
-
-                        {/* Draggable Overlays */}
-                        <div
-                            className={`absolute top-20 left-20 border-2 border-dashed p-2 cursor-move ${selectedElement === 'Logo' ? 'border-brand-blue bg-blue-50/20' : 'border-transparent hover:border-gray-300'}`}
-                            onClick={() => setSelectedElement('Logo')}
-                        >
-                            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-xs text-gray-500">Logo</div>
-                        </div>
-
-                        <div
-                            className={`absolute top-40 left-1/2 -translate-x-1/2 border-2 border-dashed p-2 cursor-move ${selectedElement === 'Greeting' ? 'border-brand-blue bg-blue-50/20' : 'border-transparent hover:border-gray-300'}`}
-                            onClick={() => setSelectedElement('Greeting')}
-                        >
-                            <h1 className="text-4xl font-serif text-gray-800 text-center">Happy Holidays!</h1>
-                        </div>
-
-                        <div
-                            className={`absolute bottom-32 left-1/2 -translate-x-1/2 border-2 border-dashed p-2 cursor-move ${selectedElement === 'Name' ? 'border-brand-blue bg-blue-50/20' : 'border-transparent hover:border-gray-300'}`}
-                            onClick={() => setSelectedElement('Name')}
-                        >
-                            <p className="text-xl font-medium text-gray-700">{`{Recipient Name}`}</p>
-                        </div>
-                    </div>
+                        Proceed to Distribution &rarr;
+                    </button>
                 </div>
             </div>
 
-            {/* RIGHT: Property Panel */}
-            <div className="w-full lg:w-80 bg-white border border-gray-200 rounded-xl flex flex-col shadow-sm">
-                <div className="p-4 border-b border-gray-100 font-semibold flex items-center gap-2">
-                    <Icon icon={Move} size={18} />
-                    Layer Properties
+            {/* Editor Toolbar (Zoom, etc.) - Removed */}
+            {/* <EditorHeader /> */}
+
+            {/* Preview Toolbar (New) */}
+            {batchData.length > 0 && (
+                <div className="bg-blue-50 border-b border-blue-100 px-6 py-2 flex items-center justify-between">
+                    <span className="text-sm font-medium text-blue-800 flex items-center gap-2">
+                        <PlayCircle size={16} />
+                        Previewing Row {previewIndex + 1} of {batchData.length}
+                    </span>
+                    <div className="flex items-center gap-2 bg-white rounded-md shadow-sm border border-gray-200 p-1">
+                        <button
+                            onClick={prevPreview}
+                            className="p-1 hover:bg-gray-100 rounded text-gray-600"
+                            title="Previous Row"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+                        <span className="text-xs font-mono w-8 text-center">{previewIndex + 1}</span>
+                        <button
+                            onClick={nextPreview}
+                            className="p-1 hover:bg-gray-100 rounded text-gray-600"
+                            title="Next Row"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
                 </div>
+            )}
 
-                <div className="flex-1 p-4 overflow-y-auto space-y-6">
-                    {selectedElement ? (
-                        <>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <h4 className="font-medium text-brand-blue">{selectedElement}</h4>
-                                    <Toggle defaultChecked label="Visible" />
-                                </div>
+            {/* Main Layout */}
+            <div className="flex flex-1 overflow-hidden relative">
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-gray-500">Layer Type</label>
-                                    <Input value="Text Layer" readOnly className="bg-gray-50 text-gray-500" />
-                                </div>
+                {/* Left Drawer - Elements -> Hidden in screenshot mostly, but keeping it */}
+                {/* To match screenshot cleaner look, maybe collapsable? For now, standard */}
+                {/* Actually, user didn't complain about Left Panel, just 'same like that' referring to layout */}
+                {/* I will keep LeftElementsPanel but maybe style it cleaner? */}
+                {/* The screenshot doesn't show a Left Panel. Maybe it's hidden or not there? */}
+                {/* If I remove it, they can't add elements. I'll keep it but maybe it should be an overlay or tab? */}
+                {/* For now, let's keep it but maybe minimize width if empty? */}
+                {/* I'll stick to the original plan: columns. Left - Center - Right. */}
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-gray-500 mb-1 block">X Position</label>
-                                        <Input type="number" defaultValue="50" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-gray-500 mb-1 block">Y Position</label>
-                                        <Input type="number" defaultValue="120" />
-                                    </div>
-                                </div>
-                            </div>
+                {/* <div className="hidden"> 
+                   <LeftElementsPanel /> 
+                </div> */}
+                {/* Wait, if I hide it, how do they add things? Screenshot usually implies selected state. */}
+                {/* I will keep it. */}
 
-                            <div className="pt-4 border-t border-gray-100 space-y-4">
-                                <div className="flex items-center gap-2 font-medium text-sm">
-                                    <Icon icon={Type} size={16} /> Typography
-                                </div>
+                {/* Left Drawer - Elements */}
+                {/* I'll make it part of the layout flow */}
+                <LeftElementsPanel />
 
-                                <Select
-                                    options={[{ label: 'Inter', value: 'Inter' }, { label: 'Playfair Display', value: 'Playfair' }, { label: 'Roboto', value: 'Roboto' }]}
-                                />
+                {/* Center - Canvas Stage */}
+                <CanvasStage />
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <Input type="number" defaultValue="42" label="Size (px)" />
-                                    <Input type="color" className="h-[38px] p-1 cursor-pointer" defaultValue="#1f2937" label="Color" />
-                                </div>
+                {/* Right Drawer - Properties */}
+                <RightPropertiesPanel />
 
-                                <div className="flex bg-gray-100 rounded-lg p-1">
-                                    <Button variant="ghost" size="sm" className="flex-1 h-8 bg-white shadow-sm"><AlignLeft size={14} /></Button>
-                                    <Button variant="ghost" size="sm" className="flex-1 h-8"><AlignCenter size={14} /></Button>
-                                    <Button variant="ghost" size="sm" className="flex-1 h-8"><AlignRight size={14} /></Button>
-                                </div>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="text-center text-gray-400 py-10">
-                            <p>Select an element on canvas to edit properties</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="p-4 border-t border-gray-100 bg-gray-50 rounded-b-xl">
-                    <Button className="w-full">
-                        <Save className="mr-2 h-4 w-4" /> Save Layout
-                    </Button>
-                </div>
             </div>
         </div>
     );

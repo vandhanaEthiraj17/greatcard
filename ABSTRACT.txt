@@ -1,0 +1,17 @@
+GreatCard Project Abstract
+
+The GreatCard project is a sophisticated web-based system designed for the automated, bulk generation of personalized digital cards. By integrating a modern frontend, a robust backend, and a specialized AI/image-processing engine, the application streamlines the workflow of creating unique assets from templates and structured data.
+
+System Architecture
+The solution is built on a three-tier architecture:
+1.  Frontend (Client): A responsive single-page application developed with React, Vite, and Tailwind CSS. It serves as the user interface for administrative tasks, allowing users to upload card templates, manage CSV data batches for recipients, and configure the visual layout of text overlays.
+2.  Backend (Server): A Node.js and Express application that acts as the central controller. It manages data persistence using MongoDB, storing configuration states, batch statuses, and generated file paths. The server handles CSV parsing to extract individual recipient data and coordinates the generation pipeline.
+3.  AI Engine: A Python-based service built with FastAPI. This engine performs the heavy lifting of image manipulation and generation. It runs locally, ensuring data privacy and eliminating per-transaction costs associated with cloud APIs.
+
+Core Functionalities
+-   Bulk Personalization: The primary feature is the ability to merge a base image template with variable data from uploaded CSV files. The logic supports dynamic placement of text (e.g., names, dates) onto the canvas, styled according to user-defined coordinates and fonts.
+-   Local Image Processing: The AI engine utilizes the Python Imaging Library (PIL) for precise text compositing. Additionally, it integrates a local deployment of Stable Diffusion (via Hugging Face `diffusers` and `torch`), leveraging Apple Silicon (MPS) for hardware-accelerated image generation. This capability allows the system to not only modify existing templates but potentially generate entirely new visual assets from text prompts.
+-   Scalable Workflow: The system is designed to handle high-volume batches. The backend iterates through data rows, dispatching composition requests to the Python engine, and saving the resulting high-quality images to local storage.
+
+Use Cases and Impact
+GreatCard addresses the need for efficient mass-production of personalized graphics, such as event invitations, certificates, or marketing cards. By automating the "mail merge" process for images and providing a local, cost-free AI generation capability, it significantly reduces manual effort and operational costs while maintaining high customization standards. The modular design allows for easy expansion, such as adding more complex generative AI workflows or supporting new data input formats.

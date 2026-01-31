@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Toggle } from "@/components/ui/Toggle";
-import { Select } from "@/components/ui/Select";
 import { Icon } from "@/components/common/Icon";
-import { Move, Type, AlignLeft, AlignCenter, AlignRight, ZoomIn, ZoomOut, Save } from "lucide-react";
+import { Move, Type, ZoomIn, ZoomOut, Save } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 
@@ -156,9 +155,9 @@ const StepVisualPositioning = ({ onNext, onBack, initialData }: StepVisualPositi
                             {/* Toolbar */}
                             <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4">
                                 <div className="flex items-center gap-2">
-                                    <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 10, 50))}><ZoomOut size={16} /></Button>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(z - 10, 50))}><ZoomOut size={16} /></Button>
                                     <span className="text-xs font-medium w-12 text-center">{zoom}%</span>
-                                    <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 10, 200))}><ZoomIn size={16} /></Button>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(z + 10, 200))}><ZoomIn size={16} /></Button>
                                 </div>
                                 <Badge variant="outline" className="bg-gray-50">{canvasDims.label}</Badge>
                             </div>
@@ -265,7 +264,7 @@ const StepVisualPositioning = ({ onNext, onBack, initialData }: StepVisualPositi
                             </div>
 
                             <div className="p-4 border-t border-gray-100 bg-gray-50">
-                                <Button className="w-full mb-2" variant="outline" onClick={handleSaveLayout} disabled={!initialData?.template}>
+                                <Button type="button" className="w-full mb-2" variant="outline" onClick={handleSaveLayout} disabled={!initialData?.template}>
                                     <Save className="mr-2 h-4 w-4" /> Save Layout
                                 </Button>
                             </div>
@@ -275,10 +274,10 @@ const StepVisualPositioning = ({ onNext, onBack, initialData }: StepVisualPositi
             </Card>
 
             <div className="flex justify-between pt-4 pb-20">
-                <Button variant="secondary" onClick={onBack}>
+                <Button type="button" variant="secondary" onClick={onBack}>
                     Back
                 </Button>
-                <Button variant="cta" onClick={handleContinue}>
+                <Button type="button" variant="cta" onClick={handleContinue}>
                     Next Step: Output & Distribution
                 </Button>
             </div>

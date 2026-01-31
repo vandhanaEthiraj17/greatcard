@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { Stage, Layer, Image as KonvaImage, Text } from 'react-konva';
+import useImage from 'use-image';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Select } from "@/components/ui/Select";
 import { Toggle } from "@/components/ui/Toggle";
 import { Alert } from "@/components/ui/Alert";
@@ -34,12 +35,77 @@ const StepGeneration = ({ onBack, data }: StepGenerationProps) => {
     const [instagramEnabled, setInstagramEnabled] = useState(false);
     const [instagramCaption, setInstagramCaption] = useState("Check out this card! #GreatCard");
 
+    // Local Generation (Client Side)
+    const stageRef = useRef<any>(null);
+    const [localTemplateImage] = useImage(data.localFile ? URL.createObjectURL(data.localFile) : (data.template?.previewPath || ''), 'anonymous');
+
+    // Determine dimensions
+    const getRatioDims = () => {
+        const ratio = data.aspectRatio || '9:16';
+        if (ratio === '16:9') return { width: 1920, height: 1080 };
+        if (ratio === '1:1') return { width: 1080, height: 1080 };
+        return { width: 1080, height: 1920 };
+    };
+    const dims = getRatioDims();
+
     const handleGenerate = async () => {
         setIsGenerating(true);
         setProgress(10);
         setError(null);
 
+        // Check if we should do client-side generation (all local files, or single manual entry)
+        const isClientSide = !!data.localFile || (data.batchData?.id?.startsWith('manual-') && !data.template?._id) || !data.template?._id;
+
+        if (isClientSide) {
+            console.log("Starting Client-Side Generation...");
+            try {
+                // Determine recipients (manual single or small batch)
+                const rows = data.batchData?.rows || data.batchData?.preview || [];
+                if (rows.length === 0 && data.batchData?.id?.startsWith('manual-')) {
+                    // Fallback if rows empty but manual data exists elsewhere? usually in preview
+                }
+
+                const generated: any[] = [];
+                const total = rows.length || 1;
+
+                // For client side, we currently only support the single manual entry accurately because we only have one stageRef
+                // But we can update the stage and await.
+                // However, for Manual Entry there is usually only 1 row.
+
+                for (let i = 0; i < total; i++) {
+                    const row = rows[i] || {};
+                    // Wait for stage to simple re-render if we were loopin (not needed for single)
+                    // Capture
+                    if (stageRef.current) {
+                        const dataUrl = stageRef.current.toDataURL({ pixelRatio: 1 }); // 1080p is already big
+                        generated.push({
+                            outputPath: dataUrl,
+                            recipientData: row,
+                            id: `gen-${Date.now()}-${i}`
+                        });
+                    }
+                    setProgress(prev => Math.min(prev + (90 / total), 90));
+                    await new Promise(r => setTimeout(r, 100)); // yielding
+                }
+
+                setProgress(100);
+                setTimeout(() => {
+                    setIsGenerating(false);
+                    setIsComplete(true);
+                    setGeneratedCards(generated);
+                }, 500);
+                return;
+
+            } catch (err: any) {
+                console.error("Client Generation Error:", err);
+                setIsGenerating(false);
+                setError("Failed to generate image client-side.");
+                return;
+            }
+        }
+
         try {
+            // Backend Generation Logic (Existing)
             // Transform data for backend if needed
             const layerConfig = data.layers?.map((l: any) => ({
                 type: l.type === 'logo' ? 'image' : 'text',
@@ -308,6 +374,57 @@ const StepGeneration = ({ onBack, data }: StepGenerationProps) => {
                 <Button variant="secondary" onClick={onBack} disabled={isGenerating}>
                     Back
                 </Button>
+            </div>
+            {/* Hidden Stage for Client Side Generation */}
+            <div style={{ position: 'absolute', top: -10000, left: -10000, visibility: 'hidden' }}>
+                <Stage
+                    width={dims.width}
+                    height={dims.height}
+                    ref={stageRef}
+                >
+                    <Layer>
+                        {/* Background */}
+                        {localTemplateImage && (
+                            <KonvaImage
+                                image={localTemplateImage}
+                                width={dims.width}
+                                height={dims.height}
+                            />
+                        )}
+
+                        {/* Layers */}
+                        {data.layers?.map((layer: any) => {
+                            // Simple text replacement for Single Entry (index 0)
+                            let content = layer.content;
+                            const row = (data.batchData?.rows || data.batchData?.preview || [])[0] || {};
+
+                            if (layer.type === 'text') {
+                                Object.keys(row).forEach(key => {
+                                    const regex = new RegExp(`{{?${key}}}?`, 'gi');
+                                    content = content.replace(regex, row[key]);
+                                });
+
+                                return (
+                                    <Text
+                                        key={layer.id}
+                                        x={layer.x} // Note: Coordinates might need scaling if Visual Editor was scaled? 
+                                        // Visual Editor saves "screen coordinates" or "original coordinates"?
+                                        // Usually VisualEditor implementation maps back to original 1080p if designed well.
+                                        // But here we might differ. We will assume 1:1 mapping from stored layer.x/y
+                                        y={layer.y}
+                                        text={content}
+                                        fontFamily={layer.style?.font}
+                                        fontSize={layer.style?.size}
+                                        fill={layer.style?.color}
+                                        align={layer.style?.align}
+                                    // Centering?
+                                    />
+                                );
+                            }
+                            return null;
+                        })}
+                    </Layer>
+                </Stage>
             </div>
         </div>
     );

@@ -19,7 +19,7 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
     const [inputMode, setInputMode] = useState<'csv' | 'manual'>('csv');
 
     // CSV State
-    const [file, setFile] = useState<File | null>(null);
+    // const [file, setFile] = useState<File | null>(null); // Unused
     const [batchData, setBatchData] = useState<any>(initialData?.batchData || null);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string>("");
@@ -34,7 +34,7 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
     const [brandName, setBrandName] = useState(initialData?.brand?.name || "");
 
     const handleCSVUpload = async (selectedFile: File) => {
-        setFile(selectedFile);
+        // setFile(selectedFile);
         setIsUploading(true);
         setError("");
 
@@ -155,12 +155,14 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                         </div>
                         <div className="flex bg-gray-100 p-1 rounded-lg">
                             <button
+                                type="button"
                                 onClick={() => setInputMode('csv')}
                                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${inputMode === 'csv' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                             >
                                 Bulk Upload (CSV)
                             </button>
                             <button
+                                type="button"
                                 onClick={() => setInputMode('manual')}
                                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${inputMode === 'manual' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                             >
@@ -179,6 +181,27 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                                         accept={EXTENSION_TYPES.CSV}
                                         onFileSelect={handleCSVUpload}
                                     />
+                                    <div className="flex justify-start">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const headers = ['Name', 'Position', 'Occasion', 'Phone', 'Email'];
+                                                const csvContent = headers.join(',') + '\nexample name,example position,example occasion,1234567890,example@email.com';
+                                                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                                const url = URL.createObjectURL(blob);
+                                                const link = document.createElement('a');
+                                                link.setAttribute('href', url);
+                                                link.setAttribute('download', 'recipient_template.csv');
+                                                link.style.visibility = 'hidden';
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                            }}
+                                            className="text-sm text-brand-blue hover:text-blue-700 underline flex items-center gap-1"
+                                        >
+                                            <Icon icon={FileSpreadsheet} size={14} /> Download CSV Template
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="flex-1 w-full">
                                     {isUploading ? (
@@ -243,10 +266,11 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
             </Card>
 
             <div className="flex justify-between pt-4 pb-20">
-                <Button variant="secondary" onClick={onBack}>
+                <Button type="button" variant="secondary" onClick={onBack}>
                     Back
                 </Button>
                 <Button
+                    type="button"
                     disabled={isNextDisabled()}
                     variant="cta"
                     onClick={handleContinue}

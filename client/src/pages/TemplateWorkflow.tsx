@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Card } from "@/components/ui/Card";
 import StepSelectTemplate from "@/components/workflow/StepSelectTemplate";
 import StepInputData from "@/components/workflow/StepInputData";
 import StepVisualPositioning from "@/components/workflow/StepVisualPositioning";
 import StepGeneration from "@/components/workflow/StepGeneration";
-import { Icon } from "@/components/common/Icon";
-import { Check, ChevronRight } from "lucide-react";
+import { Check } from "lucide-react";
 
 const STEPS = [
     { id: 1, label: 'Select Template' },
@@ -45,10 +43,10 @@ const TemplateWorkflow = () => {
                             <div key={step.id} className="flex flex-col items-center gap-2 bg-gray-50 px-2">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isCompleted
-                                            ? 'bg-brand-blue border-brand-blue text-white'
-                                            : isCurrent
-                                                ? 'bg-white border-brand-blue text-brand-blue shadow-lg scale-110'
-                                                : 'bg-white border-gray-300 text-gray-400'
+                                        ? 'bg-brand-blue border-brand-blue text-white'
+                                        : isCurrent
+                                            ? 'bg-white border-brand-blue text-brand-blue shadow-lg scale-110'
+                                            : 'bg-white border-gray-300 text-gray-400'
                                         }`}
                                 >
                                     {isCompleted ? <Check size={18} /> : step.id}
@@ -80,7 +78,6 @@ const TemplateWorkflow = () => {
                         onNext={handleNext}
                         onBack={handleBack}
                         initialData={workflowData}
-                        templateId={workflowData.template?._id}
                     />
                 )}
                 {currentStep === 4 && (

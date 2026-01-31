@@ -12,7 +12,8 @@ const AppLayout = () => {
             case '/generate': return 'Generate Template';
             case '/select-template': return 'Select Template';
             case '/input-data': return 'Input Data';
-            case '/visual-positioning': return 'Visual Positioning';
+            case '/visual-positioning':
+            case '/editor': return 'Visual Positioning';
             case '/distribution': return 'Output & Distribution';
             default: return 'Overview';
         }

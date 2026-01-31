@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { generateAIImage } = require('../controllers/ai.controller');
+const { generateTemplate } = require('../controllers/ai.controller');
 
-router.post('/generate-image', generateAIImage);
+router.post('/generate-template', generateTemplate);
 
 module.exports = router;

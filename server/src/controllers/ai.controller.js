@@ -1,26 +1,64 @@
-const axios = require('axios');
+const aiService = require('../services/ai.service');
+const Template = require('../models/Template.model'); // Import Template Model
 
-// @desc    Generate Image via Python AI Engine
-// @route   POST /api/ai/generate-image
+// @desc    Generate a new AI Template
+// @route   POST /api/ai/generate-template
 // @access  Public
-exports.generateAIImage = async (req, res) => {
+exports.generateTemplate = async (req, res) => {
     try {
-        const { prompt, width, height } = req.body;
+        const { prompt, count = 4, templateId, templateMode = 'LOCKED' } = req.body;
 
-        // Call Python Service (Stub)
-        // In real dev, localhost:8000
-        const pythonResponse = await axios.post('http://localhost:8000/generate-image', {
-            prompt, width, height
-        }, { headers: { 'Content-Type': 'multipart/form-data' } }); // Note: axios might need form-data handling differently for Form() params in FastAPI
+        // Validation
+        if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'A valid text prompt is required.'
+            });
+        }
 
-        res.status(200).json({ success: true, data: pythonResponse.data });
+        let absoluteTemplatePath = null;
+
+        if (templateId) {
+            // Fetch Template
+            const template = await Template.findById(templateId);
+            if (!template) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Template file not found on server.'
+                });
+            }
+
+            // Call Service with Template Path
+            // We need the absolute path on disk
+            const path = require('path');
+            // template.filePath is relative like "/storage/uploads/..."
+            // We need to resolve it relative to server root or absolute.
+            // Assuming server run from 'server/' and storage is '../storage'
+            const relativePath = template.filePath.startsWith('/') ? template.filePath.slice(1) : template.filePath; // remove leading slash
+            absoluteTemplatePath = path.join(__dirname, '../../../', relativePath);
+        }
+
+        const imagePaths = await aiService.generateTemplate(absoluteTemplatePath, prompt, count, templateMode);
+
+        // Map paths to full URLs
+        const templates = imagePaths.map((path, index) => ({
+            id: index + 1,
+            imageUrl: `http://localhost:5001/${path}`
+        }));
+
+        // Success Response
+        res.status(200).json({
+            success: true,
+            templates: templates
+        });
+
     } catch (error) {
-        // Fallback or Error
-        console.error("AI Service Error:", error.message);
+        console.error('AI ENGINE ERROR:', error);
+
+        // Return standard error format
         res.status(503).json({
             success: false,
-            message: 'AI Service unavailable (Simulated response)',
-            data: { image_path: 'simulation/generated_stub.png' }
+            message: error.message || 'AI engine unavailable or failed'
         });
     }
 };
