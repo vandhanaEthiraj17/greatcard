@@ -1,0 +1,313 @@
+{
+    "occasions": {
+        "birthday": {
+            "keywords": [
+                "birthday",
+                "born",
+                "turning",
+                "year older",
+                "bday"
+            ],
+            "default_style": "celebratory",
+            "headlines": [
+                "Happy Birthday",
+                "Make a Wish",
+                "Celebrate You",
+                "Another Great Year",
+                "To You"
+            ],
+            "wishes": [
+                "Wishing you a day filled with joy, laughter, and wonderful surprises.",
+                "May this year unfold with grace, joy, and beautiful moments.",
+                "Here’s to another year of growth, happiness, and success.",
+                "Hope your special day brings you all that your heart desires."
+            ]
+        },
+        "anniversary": {
+            "keywords": [
+                "anniversary",
+                "years",
+                "wedding",
+                "milestone",
+                "together"
+            ],
+            "default_style": "elegant",
+            "headlines": [
+                "Happy Anniversary",
+                "Endless Love",
+                "Milestone Reached",
+                "Forever & Always",
+                "Years of Love"
+            ],
+            "wishes": [
+                "Celebrating the beautiful journey you've built together.",
+                "May your love continue to grow stronger with each passing year.",
+                "Here’s to many more years of shared dreams and happiness.",
+                "Wishing you a lifetime of love and joy."
+            ]
+        },
+        "farewell": {
+            "keywords": [
+                "farewell",
+                "goodbye",
+                "miss you",
+                "adieu",
+                "leaving",
+                "future",
+                "luck"
+            ],
+            "default_style": "minimal",
+            "headlines": [
+                "We Will Miss You",
+                "New Beginnings",
+                "Best Wishes",
+                "Until Next Time",
+                "Adventure Awaits"
+            ],
+            "wishes": [
+                "Thank you for your hard work and dedication. You will be missed!",
+                "Wishing you absolutely the best in your new adventure.",
+                "Goodbyes are not forever. Best of luck on your next chapter.",
+                "May your new path be filled with success and happiness."
+            ]
+        },
+        "festival_diwali": {
+            "keywords": [
+                "diwali",
+                "deepavali",
+                "lights",
+                "festival"
+            ],
+            "default_style": "festive_gold",
+            "headlines": [
+                "Happy Diwali",
+                "Festival of Lights",
+                "Prosperity & Joy",
+                "Shine Bright"
+            ],
+            "wishes": [
+                "May the festival of lights bring prosperity and happiness to your life.",
+                "Wishing you a Diwali that brings happiness to your heart and joy to your home.",
+                "Let the lights of Diwali guide you to success and glory."
+            ]
+        },
+        "festival_christmas": {
+            "keywords": [
+                "christmas",
+                "xmas",
+                "santa",
+                "holidays",
+                "merry"
+            ],
+            "default_style": "festive_red",
+            "headlines": [
+                "Merry Christmas",
+                "Season's Greetings",
+                "Joy to the World",
+                "Holiday Cheer"
+            ],
+            "wishes": [
+                "May your holidays be filled with warmth and cheerful moments.",
+                "Wishing you peace, love, and joy this Christmas season.",
+                "Merry Christmas! Hope your year ends on a bright and happy note."
+            ]
+        },
+        "corporate": {
+            "keywords": [
+                "corporate",
+                "business",
+                "company",
+                "professional",
+                "client",
+                "employee"
+            ],
+            "default_style": "corporate_premium",
+            "headlines": [
+                "Warm Regards",
+                "With Appreciation",
+                "Thank You",
+                "Season's Greetings"
+            ],
+            "wishes": [
+                "Thank you for your partnership and trust.",
+                "Wishing you continued success and a prosperous year ahead.",
+                "We appreciate your hard work and dedication.",
+                "Sending our best wishes for prosperity and success."
+            ]
+        },
+        "achievement": {
+            "keywords": [
+                "congratulations",
+                "congrats",
+                "promotion",
+                "graduated",
+                "success",
+                "achievement",
+                "proud"
+            ],
+            "default_style": "modern_bold",
+            "headlines": [
+                "Congratulations!",
+                "Well Done",
+                "So Proud",
+                "Big Achievement",
+                "Success!"
+            ],
+            "wishes": [
+                "Your hard work has truly paid off. Very well done!",
+                "Wishing you even more success in the future.",
+                "A well-deserved success! Congratulations on your achievement.",
+                "So happy to see you reach this milestone."
+            ]
+        },
+        "general": {
+            "keywords": [],
+            "default_style": "modern",
+            "headlines": [
+                "Best Wishes",
+                "Greetings",
+                "Hello",
+                "Warmest Thoughts",
+                "Thinking of You"
+            ],
+            "wishes": [
+                "Sending you positive vibes and warm wishes.",
+                "Thinking of you and wishing you a wonderful day.",
+                "May your day be filled with light and happiness.",
+                "Just sending a little note to brighten your day."
+            ]
+        }
+    },
+    "styles": {
+        "elegant": {
+            "mood": "Sophisticated, Refined, Meaningful, Serene",
+            "background_description": "luxury marble texture with gold veins, soft lighting, premium paper texture, cream and white tones",
+            "palette": {
+                "primary": "#1f2937",
+                "accent": "#d4af37",
+                "text_contrast": "dark"
+            },
+            "typography": {
+                "headline": "serif",
+                "body": "serif-light"
+            }
+        },
+        "celebratory": {
+            "mood": "Joyful, Vibrant, Energetic, Fun",
+            "background_description": "soft watercolor splash, pleasant confetti, pastel gradient background, celebration, pink and orange hues",
+            "palette": {
+                "primary": "#be185d",
+                "accent": "#fbcfe8",
+                "text_contrast": "dark"
+            },
+            "typography": {
+                "headline": "sans-bold",
+                "body": "sans"
+            }
+        },
+        "minimal": {
+            "mood": "Clean, Calm, Professional, Airy",
+            "background_description": "abstract geometric shapes, soft neutral tones, expansive whitespace, minimalist art, light grey background",
+            "palette": {
+                "primary": "#374151",
+                "accent": "#9ca3af",
+                "text_contrast": "dark"
+            },
+            "typography": {
+                "headline": "sans-thin",
+                "body": "sans"
+            }
+        },
+        "luxury": {
+            "mood": "Premium, Exclusive, Grand, Dramatic",
+            "background_description": "black silk texture, golden particles, bokeh lighting, dark premium atmosphere, rich black background",
+            "palette": {
+                "primary": "#ffffff",
+                "accent": "#ffd700",
+                "text_contrast": "light"
+            },
+            "typography": {
+                "headline": "serif-display",
+                "body": "serif"
+            }
+        },
+        "modern": {
+            "mood": "Trendy, Fresh, Dynamic, Cool",
+            "background_description": "modern fluid gradient, tech-inspired mesh, vivid blue and purple tones, digital art style",
+            "palette": {
+                "primary": "#ffffff",
+                "accent": "#3b82f6",
+                "text_contrast": "light"
+            },
+            "typography": {
+                "headline": "sans-bold",
+                "body": "sans"
+            }
+        },
+        "boho": {
+            "mood": "Earthy, Natural, Warm, Organic",
+            "background_description": "dried flowers, beige and terra cotta tones, linen texture, organic shapes, warm sunlight",
+            "palette": {
+                "primary": "#78350f",
+                "accent": "#d97706",
+                "text_contrast": "dark"
+            },
+            "typography": {
+                "headline": "serif-italic",
+                "body": "sans"
+            }
+        },
+        "corporate_premium": {
+            "mood": "Professional, Trustworthy, Structured, sleek",
+            "background_description": "navy blue geometric patterns, subtle network lines, clean corporate aesthetic, white background",
+            "palette": {
+                "primary": "#ffffff",
+                "accent": "#0f172a",
+                "text_contrast": "dark"
+            },
+            "typography": {
+                "headline": "sans-bold",
+                "body": "sans"
+            }
+        },
+        "festive_gold": {
+            "mood": "Radiant, Spiritual, Warm, Glowing",
+            "background_description": "glowing diyas, marigold flowers, deep red and gold patterns, rich indian motifs",
+            "palette": {
+                "primary": "#ffffff",
+                "accent": "#fbbf24",
+                "text_contrast": "light"
+            },
+            "typography": {
+                "headline": "serif-bold",
+                "body": "serif"
+            }
+        },
+        "festive_red": {
+            "mood": "Warm, Cozy, Magical, Traditional",
+            "background_description": "dark red background, pine branches, snow flakes, golden bells, christmas ornament texture",
+            "palette": {
+                "primary": "#ffffff",
+                "accent": "#166534",
+                "text_contrast": "light"
+            },
+            "typography": {
+                "headline": "serif-display",
+                "body": "serif"
+            }
+        },
+        "modern_bold": {
+            "mood": "Impactful, Strong, Confident",
+            "background_description": "bold typography art, high contrast yellow and black, pop art style halftones",
+            "palette": {
+                "primary": "#ffffff",
+                "accent": "#facc15",
+                "text_contrast": "dark"
+            },
+            "typography": {
+                "headline": "sans-extra-bold",
+                "body": "sans-bold"
+            }
+        }
+    }
+}
