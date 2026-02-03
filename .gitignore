@@ -1,4 +1,6 @@
+# =========================
 # Dependencies
+# =========================
 node_modules/
 __pycache__/
 *.pyc
@@ -6,32 +8,55 @@ __pycache__/
 venv/
 .venv/
 
+# =========================
 # Environment Variables
+# =========================
 .env
 .env.local
 .env.*.local
 
+# =========================
 # Build Outputs
+# =========================
 dist/
 build/
 coverage/
 
-# System
+# =========================
+# System Files
+# =========================
 .DS_Store
 Thumbs.db
 
-# Project Storage (Generated Content)
-storage/generated/
-storage/uploads/
-# Keep storage/templates? assuming yes for now, or ignore specific large files
+# =========================
+# DATABASE FILES (CRITICAL - NEVER COMMIT)
+# =========================
+data/
+db/
+tmp_db/
+*.wt
+WiredTiger*
+journal/
 
+# =========================
+# Project Storage (Generated Content)
+# =========================
+storage/generated/*
+storage/uploads/*
+!storage/generated/.gitkeep
+!storage/uploads/.gitkeep
+
+# =========================
 # Logs
+# =========================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 logs/
 *.log
 
-# Editor
+# =========================
+# Editor / IDE
+# =========================
 .vscode/
 .idea/
