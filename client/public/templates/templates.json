@@ -1,0 +1,912 @@
+{
+  "birthday": [
+    {
+      "id": "birthday_card1",
+      "name": "Birthday Card 1",
+      "category": "birthday",
+      "path": "/templates/birthday/card1.jpg"
+    },
+    {
+      "id": "birthday_card2",
+      "name": "Birthday Card 2",
+      "category": "birthday",
+      "path": "/templates/birthday/card2.jpg"
+    },
+    {
+      "id": "birthday_card3",
+      "name": "Birthday Card 3",
+      "category": "birthday",
+      "path": "/templates/birthday/card3.jpg"
+    },
+    {
+      "id": "birthday_card4",
+      "name": "Birthday Card 4",
+      "category": "birthday",
+      "path": "/templates/birthday/card4.jpg"
+    },
+    {
+      "id": "birthday_card5",
+      "name": "Birthday Card 5",
+      "category": "birthday",
+      "path": "/templates/birthday/card5.jpg"
+    },
+    {
+      "id": "birthday_card6",
+      "name": "Birthday Card 6",
+      "category": "birthday",
+      "path": "/templates/birthday/card6.jpg"
+    },
+    {
+      "id": "birthday_card7",
+      "name": "Birthday Card 7",
+      "category": "birthday",
+      "path": "/templates/birthday/card7.jpg"
+    },
+    {
+      "id": "birthday_card8",
+      "name": "Birthday Card 8",
+      "category": "birthday",
+      "path": "/templates/birthday/card8.jpg"
+    },
+    {
+      "id": "birthday_card9",
+      "name": "Birthday Card 9",
+      "category": "birthday",
+      "path": "/templates/birthday/card9.jpg"
+    },
+    {
+      "id": "birthday_card10",
+      "name": "Birthday Card 10",
+      "category": "birthday",
+      "path": "/templates/birthday/card10.jpg"
+    },
+    {
+      "id": "birthday_card11",
+      "name": "Birthday Card 11",
+      "category": "birthday",
+      "path": "/templates/birthday/card11.jpg"
+    },
+    {
+      "id": "birthday_card12",
+      "name": "Birthday Card 12",
+      "category": "birthday",
+      "path": "/templates/birthday/card12.jpg"
+    },
+    {
+      "id": "birthday_card13",
+      "name": "Birthday Card 13",
+      "category": "birthday",
+      "path": "/templates/birthday/card13.jpg"
+    },
+    {
+      "id": "birthday_card14",
+      "name": "Birthday Card 14",
+      "category": "birthday",
+      "path": "/templates/birthday/card14.jpg"
+    },
+    {
+      "id": "birthday_card15",
+      "name": "Birthday Card 15",
+      "category": "birthday",
+      "path": "/templates/birthday/card15.jpg"
+    },
+    {
+      "id": "birthday_card16",
+      "name": "Birthday Card 16",
+      "category": "birthday",
+      "path": "/templates/birthday/card16.jpg"
+    },
+    {
+      "id": "birthday_card17",
+      "name": "Birthday Card 17",
+      "category": "birthday",
+      "path": "/templates/birthday/card17.jpg"
+    },
+    {
+      "id": "birthday_card18",
+      "name": "Birthday Card 18",
+      "category": "birthday",
+      "path": "/templates/birthday/card18.jpg"
+    },
+    {
+      "id": "birthday_card19",
+      "name": "Birthday Card 19",
+      "category": "birthday",
+      "path": "/templates/birthday/card19.jpg"
+    },
+    {
+      "id": "birthday_card20",
+      "name": "Birthday Card 20",
+      "category": "birthday",
+      "path": "/templates/birthday/card20.jpg"
+    },
+    {
+      "id": "birthday_card21",
+      "name": "Birthday Card 21",
+      "category": "birthday",
+      "path": "/templates/birthday/card21.jpg"
+    },
+    {
+      "id": "birthday_card22",
+      "name": "Birthday Card 22",
+      "category": "birthday",
+      "path": "/templates/birthday/card22.jpg"
+    },
+    {
+      "id": "birthday_card23",
+      "name": "Birthday Card 23",
+      "category": "birthday",
+      "path": "/templates/birthday/card23.jpg"
+    },
+    {
+      "id": "birthday_card24",
+      "name": "Birthday Card 24",
+      "category": "birthday",
+      "path": "/templates/birthday/card24.jpg"
+    },
+    {
+      "id": "birthday_card25",
+      "name": "Birthday Card 25",
+      "category": "birthday",
+      "path": "/templates/birthday/card25.jpg"
+    },
+    {
+      "id": "birthday_card26",
+      "name": "Birthday Card 26",
+      "category": "birthday",
+      "path": "/templates/birthday/card26.jpg"
+    },
+    {
+      "id": "birthday_card27",
+      "name": "Birthday Card 27",
+      "category": "birthday",
+      "path": "/templates/birthday/card27.jpg"
+    },
+    {
+      "id": "birthday_card28",
+      "name": "Birthday Card 28",
+      "category": "birthday",
+      "path": "/templates/birthday/card28.jpg"
+    },
+    {
+      "id": "birthday_card29",
+      "name": "Birthday Card 29",
+      "category": "birthday",
+      "path": "/templates/birthday/card29.jpg"
+    },
+    {
+      "id": "birthday_card30",
+      "name": "Birthday Card 30",
+      "category": "birthday",
+      "path": "/templates/birthday/card30.jpg"
+    }
+  ],
+  "anniversary": [
+    {
+      "id": "anniversary_card1",
+      "name": "Anniversary Card 1",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card1.jpg"
+    },
+    {
+      "id": "anniversary_card2",
+      "name": "Anniversary Card 2",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card2.jpg"
+    },
+    {
+      "id": "anniversary_card3",
+      "name": "Anniversary Card 3",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card3.jpg"
+    },
+    {
+      "id": "anniversary_card4",
+      "name": "Anniversary Card 4",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card4.jpg"
+    },
+    {
+      "id": "anniversary_card5",
+      "name": "Anniversary Card 5",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card5.jpg"
+    },
+    {
+      "id": "anniversary_card6",
+      "name": "Anniversary Card 6",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card6.jpg"
+    },
+    {
+      "id": "anniversary_card7",
+      "name": "Anniversary Card 7",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card7.jpg"
+    },
+    {
+      "id": "anniversary_card8",
+      "name": "Anniversary Card 8",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card8.jpg"
+    },
+    {
+      "id": "anniversary_card9",
+      "name": "Anniversary Card 9",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card9.jpg"
+    },
+    {
+      "id": "anniversary_card10",
+      "name": "Anniversary Card 10",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card10.jpg"
+    },
+    {
+      "id": "anniversary_card11",
+      "name": "Anniversary Card 11",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card11.jpg"
+    },
+    {
+      "id": "anniversary_card12",
+      "name": "Anniversary Card 12",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card12.jpg"
+    },
+    {
+      "id": "anniversary_card13",
+      "name": "Anniversary Card 13",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card13.jpg"
+    },
+    {
+      "id": "anniversary_card14",
+      "name": "Anniversary Card 14",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card14.jpg"
+    },
+    {
+      "id": "anniversary_card15",
+      "name": "Anniversary Card 15",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card15.jpg"
+    },
+    {
+      "id": "anniversary_card16",
+      "name": "Anniversary Card 16",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card16.jpg"
+    },
+    {
+      "id": "anniversary_card17",
+      "name": "Anniversary Card 17",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card17.jpg"
+    },
+    {
+      "id": "anniversary_card18",
+      "name": "Anniversary Card 18",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card18.jpg"
+    },
+    {
+      "id": "anniversary_card19",
+      "name": "Anniversary Card 19",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card19.jpg"
+    },
+    {
+      "id": "anniversary_card20",
+      "name": "Anniversary Card 20",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card20.jpg"
+    },
+    {
+      "id": "anniversary_card21",
+      "name": "Anniversary Card 21",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card21.jpg"
+    },
+    {
+      "id": "anniversary_card22",
+      "name": "Anniversary Card 22",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card22.jpg"
+    },
+    {
+      "id": "anniversary_card23",
+      "name": "Anniversary Card 23",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card23.jpg"
+    },
+    {
+      "id": "anniversary_card24",
+      "name": "Anniversary Card 24",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card24.jpg"
+    },
+    {
+      "id": "anniversary_card25",
+      "name": "Anniversary Card 25",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card25.jpg"
+    },
+    {
+      "id": "anniversary_card26",
+      "name": "Anniversary Card 26",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card26.jpg"
+    },
+    {
+      "id": "anniversary_card27",
+      "name": "Anniversary Card 27",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card27.jpg"
+    },
+    {
+      "id": "anniversary_card28",
+      "name": "Anniversary Card 28",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card28.jpg"
+    },
+    {
+      "id": "anniversary_card29",
+      "name": "Anniversary Card 29",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card29.jpg"
+    },
+    {
+      "id": "anniversary_card30",
+      "name": "Anniversary Card 30",
+      "category": "anniversary",
+      "path": "/templates/anniversary/card30.jpg"
+    }
+  ],
+  "festival": [
+    {
+      "id": "festival_card1",
+      "name": "Festival Card 1",
+      "category": "festival",
+      "path": "/templates/festival/card1.jpg"
+    },
+    {
+      "id": "festival_card2",
+      "name": "Festival Card 2",
+      "category": "festival",
+      "path": "/templates/festival/card2.jpg"
+    },
+    {
+      "id": "festival_card3",
+      "name": "Festival Card 3",
+      "category": "festival",
+      "path": "/templates/festival/card3.jpg"
+    },
+    {
+      "id": "festival_card4",
+      "name": "Festival Card 4",
+      "category": "festival",
+      "path": "/templates/festival/card4.jpg"
+    },
+    {
+      "id": "festival_card5",
+      "name": "Festival Card 5",
+      "category": "festival",
+      "path": "/templates/festival/card5.jpg"
+    },
+    {
+      "id": "festival_card6",
+      "name": "Festival Card 6",
+      "category": "festival",
+      "path": "/templates/festival/card6.jpg"
+    },
+    {
+      "id": "festival_card7",
+      "name": "Festival Card 7",
+      "category": "festival",
+      "path": "/templates/festival/card7.jpg"
+    },
+    {
+      "id": "festival_card8",
+      "name": "Festival Card 8",
+      "category": "festival",
+      "path": "/templates/festival/card8.jpg"
+    },
+    {
+      "id": "festival_card9",
+      "name": "Festival Card 9",
+      "category": "festival",
+      "path": "/templates/festival/card9.jpg"
+    },
+    {
+      "id": "festival_card10",
+      "name": "Festival Card 10",
+      "category": "festival",
+      "path": "/templates/festival/card10.jpg"
+    },
+    {
+      "id": "festival_card11",
+      "name": "Festival Card 11",
+      "category": "festival",
+      "path": "/templates/festival/card11.jpg"
+    },
+    {
+      "id": "festival_card12",
+      "name": "Festival Card 12",
+      "category": "festival",
+      "path": "/templates/festival/card12.jpg"
+    },
+    {
+      "id": "festival_card13",
+      "name": "Festival Card 13",
+      "category": "festival",
+      "path": "/templates/festival/card13.jpg"
+    },
+    {
+      "id": "festival_card14",
+      "name": "Festival Card 14",
+      "category": "festival",
+      "path": "/templates/festival/card14.jpg"
+    },
+    {
+      "id": "festival_card15",
+      "name": "Festival Card 15",
+      "category": "festival",
+      "path": "/templates/festival/card15.jpg"
+    },
+    {
+      "id": "festival_card16",
+      "name": "Festival Card 16",
+      "category": "festival",
+      "path": "/templates/festival/card16.jpg"
+    },
+    {
+      "id": "festival_card17",
+      "name": "Festival Card 17",
+      "category": "festival",
+      "path": "/templates/festival/card17.jpg"
+    },
+    {
+      "id": "festival_card18",
+      "name": "Festival Card 18",
+      "category": "festival",
+      "path": "/templates/festival/card18.jpg"
+    },
+    {
+      "id": "festival_card19",
+      "name": "Festival Card 19",
+      "category": "festival",
+      "path": "/templates/festival/card19.jpg"
+    },
+    {
+      "id": "festival_card20",
+      "name": "Festival Card 20",
+      "category": "festival",
+      "path": "/templates/festival/card20.jpg"
+    },
+    {
+      "id": "festival_card21",
+      "name": "Festival Card 21",
+      "category": "festival",
+      "path": "/templates/festival/card21.jpg"
+    },
+    {
+      "id": "festival_card22",
+      "name": "Festival Card 22",
+      "category": "festival",
+      "path": "/templates/festival/card22.jpg"
+    },
+    {
+      "id": "festival_card23",
+      "name": "Festival Card 23",
+      "category": "festival",
+      "path": "/templates/festival/card23.jpg"
+    },
+    {
+      "id": "festival_card24",
+      "name": "Festival Card 24",
+      "category": "festival",
+      "path": "/templates/festival/card24.jpg"
+    },
+    {
+      "id": "festival_card25",
+      "name": "Festival Card 25",
+      "category": "festival",
+      "path": "/templates/festival/card25.jpg"
+    },
+    {
+      "id": "festival_card26",
+      "name": "Festival Card 26",
+      "category": "festival",
+      "path": "/templates/festival/card26.jpg"
+    },
+    {
+      "id": "festival_card27",
+      "name": "Festival Card 27",
+      "category": "festival",
+      "path": "/templates/festival/card27.jpg"
+    },
+    {
+      "id": "festival_card28",
+      "name": "Festival Card 28",
+      "category": "festival",
+      "path": "/templates/festival/card28.jpg"
+    },
+    {
+      "id": "festival_card29",
+      "name": "Festival Card 29",
+      "category": "festival",
+      "path": "/templates/festival/card29.jpg"
+    },
+    {
+      "id": "festival_card30",
+      "name": "Festival Card 30",
+      "category": "festival",
+      "path": "/templates/festival/card30.jpg"
+    }
+  ],
+  "general": [
+    {
+      "id": "general_card1",
+      "name": "General Card 1",
+      "category": "general",
+      "path": "/templates/general/card1.jpg"
+    },
+    {
+      "id": "general_card2",
+      "name": "General Card 2",
+      "category": "general",
+      "path": "/templates/general/card2.jpg"
+    },
+    {
+      "id": "general_card3",
+      "name": "General Card 3",
+      "category": "general",
+      "path": "/templates/general/card3.jpg"
+    },
+    {
+      "id": "general_card4",
+      "name": "General Card 4",
+      "category": "general",
+      "path": "/templates/general/card4.jpg"
+    },
+    {
+      "id": "general_card5",
+      "name": "General Card 5",
+      "category": "general",
+      "path": "/templates/general/card5.jpg"
+    },
+    {
+      "id": "general_card6",
+      "name": "General Card 6",
+      "category": "general",
+      "path": "/templates/general/card6.jpg"
+    },
+    {
+      "id": "general_card7",
+      "name": "General Card 7",
+      "category": "general",
+      "path": "/templates/general/card7.jpg"
+    },
+    {
+      "id": "general_card8",
+      "name": "General Card 8",
+      "category": "general",
+      "path": "/templates/general/card8.jpg"
+    },
+    {
+      "id": "general_card9",
+      "name": "General Card 9",
+      "category": "general",
+      "path": "/templates/general/card9.jpg"
+    },
+    {
+      "id": "general_card10",
+      "name": "General Card 10",
+      "category": "general",
+      "path": "/templates/general/card10.jpg"
+    },
+    {
+      "id": "general_card11",
+      "name": "General Card 11",
+      "category": "general",
+      "path": "/templates/general/card11.jpg"
+    },
+    {
+      "id": "general_card12",
+      "name": "General Card 12",
+      "category": "general",
+      "path": "/templates/general/card12.jpg"
+    },
+    {
+      "id": "general_card13",
+      "name": "General Card 13",
+      "category": "general",
+      "path": "/templates/general/card13.jpg"
+    },
+    {
+      "id": "general_card14",
+      "name": "General Card 14",
+      "category": "general",
+      "path": "/templates/general/card14.jpg"
+    },
+    {
+      "id": "general_card15",
+      "name": "General Card 15",
+      "category": "general",
+      "path": "/templates/general/card15.jpg"
+    },
+    {
+      "id": "general_card16",
+      "name": "General Card 16",
+      "category": "general",
+      "path": "/templates/general/card16.jpg"
+    },
+    {
+      "id": "general_card17",
+      "name": "General Card 17",
+      "category": "general",
+      "path": "/templates/general/card17.jpg"
+    },
+    {
+      "id": "general_card18",
+      "name": "General Card 18",
+      "category": "general",
+      "path": "/templates/general/card18.jpg"
+    },
+    {
+      "id": "general_card19",
+      "name": "General Card 19",
+      "category": "general",
+      "path": "/templates/general/card19.jpg"
+    },
+    {
+      "id": "general_card20",
+      "name": "General Card 20",
+      "category": "general",
+      "path": "/templates/general/card20.jpg"
+    },
+    {
+      "id": "general_card21",
+      "name": "General Card 21",
+      "category": "general",
+      "path": "/templates/general/card21.jpg"
+    },
+    {
+      "id": "general_card22",
+      "name": "General Card 22",
+      "category": "general",
+      "path": "/templates/general/card22.jpg"
+    },
+    {
+      "id": "general_card23",
+      "name": "General Card 23",
+      "category": "general",
+      "path": "/templates/general/card23.jpg"
+    },
+    {
+      "id": "general_card24",
+      "name": "General Card 24",
+      "category": "general",
+      "path": "/templates/general/card24.jpg"
+    },
+    {
+      "id": "general_card25",
+      "name": "General Card 25",
+      "category": "general",
+      "path": "/templates/general/card25.jpg"
+    },
+    {
+      "id": "general_card26",
+      "name": "General Card 26",
+      "category": "general",
+      "path": "/templates/general/card26.jpg"
+    },
+    {
+      "id": "general_card27",
+      "name": "General Card 27",
+      "category": "general",
+      "path": "/templates/general/card27.jpg"
+    },
+    {
+      "id": "general_card28",
+      "name": "General Card 28",
+      "category": "general",
+      "path": "/templates/general/card28.jpg"
+    },
+    {
+      "id": "general_card29",
+      "name": "General Card 29",
+      "category": "general",
+      "path": "/templates/general/card29.jpg"
+    },
+    {
+      "id": "general_card30",
+      "name": "General Card 30",
+      "category": "general",
+      "path": "/templates/general/card30.jpg"
+    }
+  ],
+  "onboarding": [
+    {
+      "id": "onboarding_card1",
+      "name": "Onboarding Card 1",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card1.jpg"
+    },
+    {
+      "id": "onboarding_card2",
+      "name": "Onboarding Card 2",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card2.jpg"
+    },
+    {
+      "id": "onboarding_card3",
+      "name": "Onboarding Card 3",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card3.jpg"
+    },
+    {
+      "id": "onboarding_card4",
+      "name": "Onboarding Card 4",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card4.jpg"
+    },
+    {
+      "id": "onboarding_card5",
+      "name": "Onboarding Card 5",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card5.jpg"
+    },
+    {
+      "id": "onboarding_card6",
+      "name": "Onboarding Card 6",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card6.jpg"
+    },
+    {
+      "id": "onboarding_card7",
+      "name": "Onboarding Card 7",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card7.jpg"
+    },
+    {
+      "id": "onboarding_card8",
+      "name": "Onboarding Card 8",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card8.jpg"
+    },
+    {
+      "id": "onboarding_card9",
+      "name": "Onboarding Card 9",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card9.jpg"
+    },
+    {
+      "id": "onboarding_card10",
+      "name": "Onboarding Card 10",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card10.jpg"
+    },
+    {
+      "id": "onboarding_card11",
+      "name": "Onboarding Card 11",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card11.jpg"
+    },
+    {
+      "id": "onboarding_card12",
+      "name": "Onboarding Card 12",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card12.jpg"
+    },
+    {
+      "id": "onboarding_card13",
+      "name": "Onboarding Card 13",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card13.jpg"
+    },
+    {
+      "id": "onboarding_card14",
+      "name": "Onboarding Card 14",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card14.jpg"
+    },
+    {
+      "id": "onboarding_card15",
+      "name": "Onboarding Card 15",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card15.jpg"
+    },
+    {
+      "id": "onboarding_card16",
+      "name": "Onboarding Card 16",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card16.jpg"
+    },
+    {
+      "id": "onboarding_card17",
+      "name": "Onboarding Card 17",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card17.jpg"
+    },
+    {
+      "id": "onboarding_card18",
+      "name": "Onboarding Card 18",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card18.jpg"
+    },
+    {
+      "id": "onboarding_card19",
+      "name": "Onboarding Card 19",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card19.jpg"
+    },
+    {
+      "id": "onboarding_card20",
+      "name": "Onboarding Card 20",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card20.jpg"
+    },
+    {
+      "id": "onboarding_card21",
+      "name": "Onboarding Card 21",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card21.jpg"
+    },
+    {
+      "id": "onboarding_card22",
+      "name": "Onboarding Card 22",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card22.jpg"
+    },
+    {
+      "id": "onboarding_card23",
+      "name": "Onboarding Card 23",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card23.jpg"
+    },
+    {
+      "id": "onboarding_card24",
+      "name": "Onboarding Card 24",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card24.jpg"
+    },
+    {
+      "id": "onboarding_card25",
+      "name": "Onboarding Card 25",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card25.jpg"
+    },
+    {
+      "id": "onboarding_card26",
+      "name": "Onboarding Card 26",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card26.jpg"
+    },
+    {
+      "id": "onboarding_card27",
+      "name": "Onboarding Card 27",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card27.jpg"
+    },
+    {
+      "id": "onboarding_card28",
+      "name": "Onboarding Card 28",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card28.jpg"
+    },
+    {
+      "id": "onboarding_card29",
+      "name": "Onboarding Card 29",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card29.jpg"
+    },
+    {
+      "id": "onboarding_card30",
+      "name": "Onboarding Card 30",
+      "category": "onboarding",
+      "path": "/templates/onboarding/card30.jpg"
+    }
+  ]
+}
