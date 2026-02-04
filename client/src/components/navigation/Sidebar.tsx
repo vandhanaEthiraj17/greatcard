@@ -6,6 +6,7 @@ import {
     LogOut
 } from 'lucide-react';
 import { Icon, cn } from '@/components/common/Icon';
+import { useAuthStore } from '@/store/authStore';
 
 const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -13,18 +14,19 @@ const menuItems = [
     { path: '/create', label: 'Create Project', icon: LayoutTemplate },
 ];
 
+import { Logo } from '@/components/common/Logo';
+
+// ... (keep imports)
+
 const Sidebar = () => {
     const location = useLocation();
 
     return (
         <aside className="w-64 bg-white border-r border-gray-200 fixed h-full z-30 hidden md:flex flex-col shadow-lg">
             <div className="h-16 flex items-center px-6 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-brand-blue rounded-lg flex items-center justify-center shadow-md">
-                        <Icon icon={Wand2} className="text-white" size={18} />
-                    </div>
-                    <span className="text-lg font-extrabold text-gray-800 tracking-tight">GreatCard</span>
-                </div>
+                <Link to="/dashboard" className="hover:opacity-80 transition-opacity">
+                    <Logo size={32} />
+                </Link>
             </div>
 
             <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
@@ -55,7 +57,15 @@ const Sidebar = () => {
             </div>
 
             <div className="p-4 border-t border-gray-100">
-                <button className="flex items-center gap-3 px-3 py-2.5 w-full text-left text-gray-600 hover:bg-red-50 hover:text-red-500 rounded-lg transition-colors">
+                <button
+                    onClick={() => {
+                        if (window.confirm("Are you sure you want to logout?")) {
+                            useAuthStore.getState().logout();
+                            // Navigation will be handled by AppLayout redirect
+                        }
+                    }}
+                    className="flex items-center gap-3 px-3 py-2.5 w-full text-left text-gray-600 hover:bg-red-50 hover:text-red-500 rounded-lg transition-colors"
+                >
                     <Icon icon={LogOut} size={20} />
                     <span className="font-medium text-sm">Logout</span>
                 </button>

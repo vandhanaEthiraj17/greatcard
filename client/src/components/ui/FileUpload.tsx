@@ -10,7 +10,7 @@ interface FileUploadProps {
     maxSizeMB?: number;
 }
 
-const FileUpload = ({ accept, onFileSelect, label, className, maxSizeMB = 5 }: FileUploadProps) => {
+const FileUpload = ({ accept, onFileSelect, label, className }: FileUploadProps) => {
     const [isDragging, setIsDragging] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [fileName, setFileName] = useState<string | null>(null);
@@ -28,10 +28,7 @@ const FileUpload = ({ accept, onFileSelect, label, className, maxSizeMB = 5 }: F
 
     const validateAndSelect = (file: File) => {
         setError(null);
-        if (maxSizeMB && file.size > maxSizeMB * 1024 * 1024) {
-            setError(`File size must be less than ${maxSizeMB}MB`);
-            return;
-        }
+        // Size validation removed to support large files
         setFileName(file.name);
         onFileSelect(file);
     };
@@ -83,7 +80,7 @@ const FileUpload = ({ accept, onFileSelect, label, className, maxSizeMB = 5 }: F
                         )}
                     </p>
                     <p className="text-xs text-gray-400">
-                        {accept ? accept.replace(/,/g, ', ') : 'Any file'} (MAX. {maxSizeMB}MB)
+                        Supported formats: JPG, PNG, WEBP
                     </p>
                 </div>
                 <input

@@ -8,6 +8,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Icon } from "@/components/common/Icon";
 import { Palette, FileSpreadsheet } from "lucide-react";
 import { EXTENSION_TYPES } from "@/utils/constants";
+import { useEditorStore } from "@/store/editorStore";
 
 interface StepInputDataProps {
     onNext: (data: { brand: any, batchData: any }) => void;
@@ -15,26 +16,21 @@ interface StepInputDataProps {
     initialData?: { brand: any, batchData: any } | null;
 }
 
-const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
-    const [inputMode, setInputMode] = useState<'csv' | 'manual'>('csv');
+const StepInputData = ({ onNext, onBack }: StepInputDataProps) => {
 
-    // CSV State
-    // const [file, setFile] = useState<File | null>(null); // Unused
-    const [batchData, setBatchData] = useState<any>(initialData?.batchData || null);
+    // Global Store
+    const { inputData, setInputData } = useEditorStore();
+    const { mode, brand, manualData, batchData } = inputData;
+
+    // Local UI State
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string>("");
 
-    // Manual State
-    const [manualData, setManualData] = useState({
-        name: "",
-        position: "",
-        occasion: ""
-    });
-
-    const [brandName, setBrandName] = useState(initialData?.brand?.name || "");
+    const handleModeChange = (newMode: 'csv' | 'manual') => {
+        setInputData({ mode: newMode });
+    };
 
     const handleCSVUpload = async (selectedFile: File) => {
-        // setFile(selectedFile);
         setIsUploading(true);
         setError("");
 
@@ -49,7 +45,7 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
             const data = await res.json();
 
             if (data.success) {
-                setBatchData(data.data);
+                setInputData({ batchData: data.data });
             } else {
                 setError(data.message || "Upload failed");
             }
@@ -62,10 +58,10 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
     };
 
     const handleContinue = () => {
-        if (inputMode === 'csv') {
+        if (mode === 'csv') {
             if (!batchData) return;
             onNext({
-                brand: { name: brandName },
+                brand,
                 batchData
             });
         } else {
@@ -76,32 +72,35 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                 id: `manual-${Date.now()}`,
                 filename: 'manual-entry',
                 rowCount: 1,
-                headers: ['Name', 'Position', 'Occasion'],
+                headers: ['Name', 'Position', 'Occasion', 'Phone', 'Email'],
                 preview: [{
                     'Name': manualData.name,
                     'Position': manualData.position,
-                    'Occasion': manualData.occasion
+                    'Occasion': manualData.occasion,
+                    'Phone': manualData.phone || '',
+                    'Email': manualData.email || ''
                 }],
                 rows: [{
                     'Name': manualData.name,
                     'Position': manualData.position,
-                    'Occasion': manualData.occasion
-                }] // Downstream usually uses preview or re-fetches rows, but we need to ensure compatibility
-                // If backend expects a file ID for batch processing this might need adjustment, 
-                // but for visual editing Step 3, this structure usually suffices.
-                // NOTE: "rows" might not be populated in batchData usually from upload API (it returns preview), 
-                // but keeping it consistent.
+                    'Occasion': manualData.occasion,
+                    'Phone': manualData.phone || '',
+                    'Email': manualData.email || ''
+                }]
             };
 
+            // Update store with this "processed" batch data too, so Step 3 can access it consistently if it uses batchData
+            setInputData({ batchData: singleBatch as any });
+
             onNext({
-                brand: { name: brandName },
+                brand,
                 batchData: singleBatch
             });
         }
     };
 
     const isNextDisabled = () => {
-        if (inputMode === 'csv') return !batchData;
+        if (mode === 'csv') return !batchData;
         return !manualData.name;
     };
 
@@ -126,15 +125,15 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                         <Input
                             label="Brand Name"
                             placeholder="Acme Corp"
-                            value={brandName}
-                            onChange={(e) => setBrandName(e.target.value)}
+                            value={brand.name}
+                            onChange={(e) => setInputData({ brand: { ...brand, name: e.target.value } })}
                         />
                     </div>
                     <div>
                         <FileUpload
                             label="Brand Logo (PNG/SVG)"
                             accept=".png,.svg,.jpg"
-                            onFileSelect={(f) => console.log(f)}
+                            onFileSelect={(f) => setInputData({ brand: { ...brand, logo: f } })}
                             maxSizeMB={2}
                             className="h-full"
                         />
@@ -156,15 +155,15 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                         <div className="flex bg-gray-100 p-1 rounded-lg">
                             <button
                                 type="button"
-                                onClick={() => setInputMode('csv')}
-                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${inputMode === 'csv' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                onClick={() => handleModeChange('csv')}
+                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${mode === 'csv' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                             >
                                 Bulk Upload (CSV)
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setInputMode('manual')}
-                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${inputMode === 'manual' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
+                                onClick={() => handleModeChange('manual')}
+                                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${mode === 'manual' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
                             >
                                 Single Entry
                             </button>
@@ -172,7 +171,7 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {inputMode === 'csv' ? (
+                    {mode === 'csv' ? (
                         <>
                             <div className="flex flex-col md:flex-row gap-6 items-start">
                                 <div className="flex-1 w-full space-y-4">
@@ -246,19 +245,31 @@ const StepInputData = ({ onNext, onBack, initialData }: StepInputDataProps) => {
                                 label="Employee Name"
                                 placeholder="John Doe"
                                 value={manualData.name}
-                                onChange={(e) => setManualData({ ...manualData, name: e.target.value })}
+                                onChange={(e) => setInputData({ manualData: { ...manualData, name: e.target.value } })}
                             />
                             <Input
                                 label="Position / Role"
                                 placeholder="Software Engineer"
                                 value={manualData.position}
-                                onChange={(e) => setManualData({ ...manualData, position: e.target.value })}
+                                onChange={(e) => setInputData({ manualData: { ...manualData, position: e.target.value } })}
                             />
                             <Input
                                 label="Occasion"
                                 placeholder="Work Anniversary"
                                 value={manualData.occasion}
-                                onChange={(e) => setManualData({ ...manualData, occasion: e.target.value })}
+                                onChange={(e) => setInputData({ manualData: { ...manualData, occasion: e.target.value } })}
+                            />
+                            <Input
+                                label="Phone (Optional)"
+                                placeholder="+1 234..."
+                                value={manualData.phone || ''}
+                                onChange={(e) => setInputData({ manualData: { ...manualData, phone: e.target.value } })}
+                            />
+                            <Input
+                                label="Email (Optional)"
+                                placeholder="user@company.com"
+                                value={manualData.email || ''}
+                                onChange={(e) => setInputData({ manualData: { ...manualData, email: e.target.value } })}
                             />
                         </div>
                     )}

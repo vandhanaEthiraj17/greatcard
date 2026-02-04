@@ -7,14 +7,7 @@ import { Icon } from "@/components/common/Icon";
 import { Eye, Check, Search, Image as ImageIcon, Monitor, Smartphone, Grid } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FileUpload } from "@/components/ui/FileUpload";
-
-interface Template {
-    _id: string;
-    name: string;
-    type: string;
-    previewPath: string;
-    tags?: string[];
-}
+import { useEditorStore, Template } from "@/store/editorStore";
 
 interface StepSelectTemplateProps {
     onNext: (data: { template?: Template, localFile?: File, aspectRatio?: string }) => void;
@@ -28,8 +21,9 @@ const ASPECT_RATIOS = [
 ];
 
 const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) => {
+    const { setSelectedTemplate } = useEditorStore();
     const [selectedTab, setSelectedTab] = useState<'remote' | 'local'>('remote');
-    const [selectedId, setSelectedId] = useState<string | null>(initialData?.template?._id || null);
+    const [selectedId, setSelectedId] = useState<string | null>(initialData?.template?.id || null);
 
     // Local Upload State
     const [uploadedFile, setUploadedFile] = useState<File | null>(initialData?.localFile || null);
@@ -38,22 +32,37 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
 
     const [previewId, setPreviewId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+
+    // New Template State
     const [templates, setTemplates] = useState<Template[]>([]);
     const [loading, setLoading] = useState(true);
+    const [categoryFilter, setCategoryFilter] = useState("All");
 
     useEffect(() => {
-        fetch('/api/templates')
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setTemplates(data.data);
-                }
+        const fetchTemplates = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('/templates/templates.json');
+                if (!response.ok) throw new Error("Failed");
+                const data = await response.json();
+
+                const allTemplates: Template[] = Object.values(data).flat().map((t: any) => ({
+                    id: t.id,
+                    name: t.name,
+                    category: t.category,
+                    orientation: 'Portrait',
+                    previewImage: t.path,
+                    templatePath: t.path,
+                    dimensions: { width: 1080, height: 1920 } // Default to 1080p Portrait
+                }));
+                setTemplates(allTemplates);
+            } catch (e) {
+                console.error(e);
+            } finally {
                 setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
+            }
+        };
+        fetchTemplates();
     }, []);
 
     useEffect(() => {
@@ -62,22 +71,17 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
         if (params.get('source') === 'ai') {
             const aiImage = localStorage.getItem('temp_ai_image');
             if (aiImage) {
-                // Determine aspect ratio from storage or default? For now default
                 setSelectedTab('local');
                 setLocalPreviewUrl(aiImage);
-                // Convert to file object if needed for upload or just use URL
-                // For this mock, we'll pretend it's a file by fetching it
                 fetch(aiImage)
                     .then(res => res.blob())
                     .then(blob => {
                         const file = new File([blob], "ai-generated.png", { type: "image/png" });
                         setUploadedFile(file);
-                        // Clean up storage
                         localStorage.removeItem('temp_ai_image');
                     })
                     .catch(err => {
                         console.error("Failed to load AI image", err);
-                        // Fallback: just use the URL directly if blob fails (e.g. if it was a data URL or external)
                         setLocalPreviewUrl(aiImage);
                     });
             }
@@ -92,14 +96,17 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
         }
     }, [uploadedFile]);
 
-    const filteredTemplates = templates.filter(m =>
-        m.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredTemplates = templates.filter(t => {
+        const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = categoryFilter === "All" || t.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+    });
 
     const handleContinue = () => {
         if (selectedTab === 'remote') {
-            const template = templates.find(t => t._id === selectedId);
+            const template = templates.find(t => t.id === selectedId);
             if (template) {
+                setSelectedTemplate(template); // Update Global Store
                 onNext({ template });
             }
         } else {
@@ -137,10 +144,10 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
             {selectedTab === 'remote' ? (
                 <>
                     {/* Filters */}
-                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                        <div className="w-full md:w-96">
+                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                        <div className="w-full md:w-80">
                             <div className="relative">
-                                <Icon icon={Search} className="absolute left-3 top-3 text-gray-400" size={16} />
+                                <Icon icon={Search} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                                 <Input
                                     placeholder="Search templates..."
                                     className="pl-9 bg-gray-50 border-gray-200"
@@ -149,59 +156,95 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
                                 />
                             </div>
                         </div>
-                        <div className="flex gap-2">
-                            <Button variant="ghost">All Types</Button>
-                            <Button variant="ghost">Portrait</Button>
-                            <Button variant="ghost">Landscape</Button>
+                        <div className="flex gap-1 overflow-x-auto max-w-full pb-2 md:pb-0">
+                            {["All", ...Array.from(new Set(templates.map(t => t.category)))].map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setCategoryFilter(cat)}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${categoryFilter === cat
+                                        ? 'bg-brand-blue text-white shadow-md'
+                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        }`}
+                                >
+                                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                                </button>
+                            ))}
                         </div>
                     </div>
 
                     {/* Grid */}
                     {loading ? (
-                        <div className="text-center py-20 text-gray-500">Loading templates...</div>
+                        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mb-2"></div>
+                            Loading templates...
+                        </div>
+                    ) : templates.length === 0 ? (
+                        <div className="text-center py-20 text-gray-500">
+                            No templates found. Add templates to /public/templates
+                        </div>
                     ) : filteredTemplates.length === 0 ? (
-                        <div className="text-center py-20 text-gray-500">No templates found.</div>
+                        <div className="text-center py-20 text-gray-400 bg-gray-50 rounded-xl border-dashed border-2 border-gray-200">
+                            No templates found matching your criteria.
+                        </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 p-1">
                             {filteredTemplates.map((template) => (
-                                <Card key={template._id} className={`group cursor-pointer transition-all border-2 ${selectedId === template._id ? 'border-brand-blue ring-2 ring-blue-100' : 'border-transparent hover:border-gray-200 hover:shadow-md'}`} onClick={() => setSelectedId(template._id)}>
-                                    <div className="aspect-[3/4] bg-gray-100 relative overflow-hidden rounded-t-xl">
+                                <Card
+                                    key={template.id}
+                                    className={`
+                                        group cursor-pointer transition-all duration-300 border-2 overflow-hidden
+                                        ${selectedId === template.id
+                                            ? 'border-brand-blue ring-4 ring-blue-50 scale-[1.02] shadow-xl'
+                                            : 'border-transparent hover:border-gray-200 hover:shadow-lg hover:-translate-y-1'
+                                        }
+                                    `}
+                                    onClick={() => setSelectedId(template.id)}
+                                >
+                                    <div className="aspect-[3/4] bg-gray-100 relative overflow-hidden">
                                         <div className="absolute inset-0 flex items-center justify-center text-gray-300">
-                                            {template.previewPath ? (
-                                                <img src={template.previewPath} alt={template.name} className="w-full h-full object-cover" />
+                                            {template.previewImage ? (
+                                                <img
+                                                    src={template.previewImage}
+                                                    alt={template.name}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    loading="lazy"
+                                                />
                                             ) : (
                                                 <Icon icon={ImageIcon} size={48} />
                                             )}
                                         </div>
+
+                                        {/* Category Badge */}
+                                        <div className="absolute top-2 left-2 z-10">
+                                            <Badge variant="secondary" className="backdrop-blur-md bg-white/80 shadow-sm text-[10px] px-2 py-0.5 border-0">
+                                                {template.category}
+                                            </Badge>
+                                        </div>
+
                                         {/* Overlay Actions */}
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                        <div className={`absolute inset-0 bg-black/40 backdrop-blur-[1px] transition-all flex items-center justify-center gap-3 ${selectedId === template.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                                             <Button
                                                 size="icon"
                                                 variant="secondary"
-                                                className="rounded-full"
-                                                onClick={(e) => { e.stopPropagation(); setPreviewId(template._id); }}
+                                                className="rounded-full shadow-lg hover:scale-110 transition-transform"
+                                                onClick={(e) => { e.stopPropagation(); setPreviewId(template.id); }}
                                             >
                                                 <Eye size={18} />
                                             </Button>
                                             <Button
                                                 size="icon"
-                                                variant="default" // Primary Blue
-                                                className="rounded-full"
-                                                onClick={(e) => { e.stopPropagation(); setSelectedId(template._id); }}
+                                                className={`rounded-full shadow-lg hover:scale-110 transition-transform ${selectedId === template.id ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-brand-blue hover:bg-blue-600 text-white'}`}
+                                                onClick={(e) => { e.stopPropagation(); setSelectedId(template.id); }}
                                             >
                                                 <Check size={18} />
                                             </Button>
                                         </div>
                                     </div>
-                                    <CardContent className="p-4">
-                                        <h3 className="font-semibold text-gray-900 truncate">{template.name}</h3>
-                                        <div className="flex items-center justify-between mt-2">
-                                            <Badge variant="secondary" className="text-[10px]">{template.type}</Badge>
-                                            {selectedId === template._id && (
-                                                <Badge variant="default" className="bg-brand-blue">Selected</Badge>
-                                            )}
-                                        </div>
-                                    </CardContent>
+                                    <div className="p-3 bg-white">
+                                        <h3 className={`font-medium text-sm truncate ${selectedId === template.id ? 'text-brand-blue' : 'text-gray-900'}`}>
+                                            {template.name}
+                                        </h3>
+                                    </div>
                                 </Card>
                             ))}
                         </div>
@@ -217,7 +260,6 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
                                 <FileUpload
                                     label="Upload Background Image"
                                     accept=".jpg,.jpeg,.png,.webp"
-                                    maxSizeMB={5}
                                     onFileSelect={setUploadedFile}
                                     className="h-64"
                                 />
@@ -284,8 +326,8 @@ const StepSelectTemplate = ({ onNext, initialData }: StepSelectTemplateProps) =>
             >
                 <div className="flex justify-center bg-gray-50 py-10 rounded-lg border border-gray-100">
                     <div className="w-80 h-96 bg-white shadow-xl rounded flex items-center justify-center overflow-hidden">
-                        {previewId && templates.find(t => t._id === previewId)?.previewPath ? (
-                            <img src={templates.find(t => t._id === previewId)?.previewPath} className="w-full h-full object-contain" />
+                        {previewId && templates.find(t => t.id === previewId)?.previewImage ? (
+                            <img src={templates.find(t => t.id === previewId)?.previewImage} className="w-full h-full object-contain" />
                         ) : (
                             <span className="text-gray-400">Preview Image</span>
                         )}

@@ -12,26 +12,35 @@ export interface EditorElement {
     rotation?: number;
     isVisible: boolean;
     isLocked: boolean;
-    opacity?: number; // Added
+    opacity?: number;
     // Text specific
     text?: string;
     fontSize?: number;
     fontFamily?: string;
     fontWeight?: string;
-    fontStyle?: string; // Added (italic, normal)
-    textDecoration?: string; // Added (underline, none)
+    fontStyle?: string;
+    textDecoration?: string;
     fill?: string;
     align?: 'left' | 'center' | 'right';
     letterSpacing?: number;
     lineHeight?: number;
     shadowEnabled?: boolean;
-    placeholderKey?: string; // e.g., 'RecipientName'
+    placeholderKey?: string;
     // Image specific
     src?: string;
 }
 
 
-interface EditorState {
+export interface BatchData {
+    id?: string;
+    filename?: string;
+    rowCount: number;
+    headers: string[];
+    preview: BatchRow[];
+    rows?: BatchRow[];
+}
+
+export interface EditorState {
     width: number;
     height: number;
     scale: number;
@@ -64,11 +73,93 @@ interface EditorState {
     // Smart Features
     isAnalyzing?: boolean;
     autoArrangeElements: (imageUrl: string) => Promise<void>;
+
+    // Template Selection
+    selectedTemplate: Template | null;
+    setSelectedTemplate: (template: Template | null) => void;
+
+    // Project Data (Input Step)
+    inputData: {
+        brand: { name: string; logo?: File | null };
+        mode: 'csv' | 'manual';
+        batchData: BatchData | null;
+        manualData: { name: string; position: string; occasion: string; phone?: string; email?: string };
+    };
+    setInputData: (data: Partial<EditorState['inputData']>) => void;
+
+    // Layout Layers (Positioning Step & Template Builder)
+    isTemplateBuilder: boolean; // Flag for Builder Mode
+    setTemplateBuilderMode: (isBuilder: boolean) => void;
+
+    layoutLayers: Layer[];
+    setLayoutLayers: (layers: Layer[]) => void;
+    updateLayoutLayer: (id: string, updates: Partial<Layer> | Partial<Layer['style']> | { constraints: Partial<LayerConstraints> }) => void;
+    addLayoutLayer: (layer: Layer) => void; // Added for builder
 }
 
-const HISTORY_LIMIT = 50;
+export interface Template {
+    id: string;
+    name: string;
+    category: string;
+    orientation: 'Portrait' | 'Landscape';
+    previewImage: string;
+    templatePath: string;
+    dimensions?: { width: number; height: number };
+}
+
+// Enhanced Layer Interface for Template Builder
+export interface LayerConstraints {
+    lockPosition?: boolean;
+    lockStyle?: boolean;
+    lockContent?: boolean;
+    maxChars?: number;
+    allowedColors?: string[];
+}
+
+export interface Layer {
+    id: string;
+    type: 'text' | 'image' | 'logo' | 'background';
+    name: string;
+    content: string;
+
+    // Dynamic / Builder Props
+    placeholderKey?: string; // Legacy support (remove later if replacing with isDynamic)
+    isDynamic?: boolean;     // New: Marked as dynamic variable
+    variableName?: string;   // New: e.g. "recipient_name"
+    constraints?: LayerConstraints; // New: Restrictions
+
+    x: number;
+    y: number;
+    width?: number; // Added for images/backgrounds
+    height?: number; // Added for images/backgrounds
+    rotation?: number;
+    visible: boolean;
+    locked?: boolean; // User-level lock (temporary) vs Constraint lock (admin)
+    flip?: { x: boolean; y: boolean };
+    style: {
+        font?: string;
+        size?: number;
+        weight?: string | number;
+        fontStyle?: string; // italic
+        textDecoration?: string; // underline
+        color?: string;
+        backgroundColor?: string;
+        align?: 'left' | 'center' | 'right';
+        lineHeight?: number;
+        letterSpacing?: number;
+        opacity?: number;
+        borderRadius?: number;
+        scale?: number;
+        blur?: number;
+        shadow?: string;
+        gradient?: string;
+    };
+}
+
+const HISTORY_LIMIT = 50; // Defined locally
 
 export const useEditorStore = create<EditorState>((set, get) => ({
+    // ... (Keep existing simple editor state init if needed, but we focus on LayoutLayers part)
     width: ASPECT_RATIOS[DEFAULT_ASPECT_RATIO].width,
     height: ASPECT_RATIOS[DEFAULT_ASPECT_RATIO].height,
     scale: 0.5,
@@ -78,9 +169,82 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     historyIndex: 0,
     isPreviewMode: false,
 
-    // Batch Init
+    // ... (Batch/Template/Input init) ...
     batchData: [],
     previewIndex: 0,
+    selectedTemplate: null,
+    setSelectedTemplate: (template) => set({ selectedTemplate: template }),
+    inputData: {
+        brand: { name: '' },
+        mode: 'csv',
+        batchData: null,
+        manualData: { name: '', position: '', occasion: '', phone: '', email: '' }
+    },
+    setInputData: (data) => set((state) => ({ inputData: { ...state.inputData, ...data } })),
+
+    // Layout Layers & Advanced Edit Mode
+    isTemplateBuilder: false,
+    setTemplateBuilderMode: (isBuilder) => set({ isTemplateBuilder: isBuilder }),
+
+    layoutLayers: [],
+    setLayoutLayers: (layers) => {
+        // Init history on set
+        set({
+            layoutLayers: layers,
+            history: [layers as any],
+            historyIndex: 0
+        });
+    },
+
+    addLayoutLayer: (layer) => set((state) => {
+        const newLayers = [...state.layoutLayers, layer];
+        // TODO: History logic for this
+        return { layoutLayers: newLayers };
+    }),
+
+    updateLayoutLayer: (id, updates) => set((state) => {
+        const newLayers = state.layoutLayers.map(l => {
+            if (l.id !== id) return l;
+
+            // Strict lock check (if constraints are active)
+            // But we allow ANY edit if we are in TemplateBuilder mode (Admin overrides)
+            const isBuilder = state.isTemplateBuilder;
+            if (!isBuilder && l.locked && !('locked' in updates)) return l;
+
+            // Handle merging nested objects
+            let updatedLayer = { ...l };
+
+            // Check if updates has 'style' or flat props
+            if ('style' in updates) {
+                // @ts-ignore
+                updatedLayer.style = { ...l.style, ...updates.style };
+            } else if ('constraints' in updates) {
+                // @ts-ignore
+                updatedLayer.constraints = { ...l.constraints, ...updates.constraints };
+            }
+            // Check for flat style props (legacy support)
+            else if ('font' in updates || 'size' in updates || 'color' in updates || 'align' in updates || 'shadow' in updates || 'blur' in updates) {
+                // @ts-ignore
+                updatedLayer.style = { ...l.style, ...updates };
+                // And also merge others just in case? No, separate logic.
+            } else {
+                // Top level props
+                updatedLayer = { ...updatedLayer, ...updates };
+            }
+
+            return updatedLayer;
+        });
+
+        // History Push logic (Should be debounced in production, simple here)
+        const newHistory = [...state.history.slice(0, state.historyIndex + 1), newLayers as any].slice(-HISTORY_LIMIT);
+
+        return {
+            layoutLayers: newLayers,
+            history: newHistory,
+            historyIndex: newHistory.length - 1
+        };
+    }),
+
 
     setDimension: (ratioName) => set(() => {
         const config = ASPECT_RATIOS[ratioName] || ASPECT_RATIOS[DEFAULT_ASPECT_RATIO];
